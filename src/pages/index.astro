@@ -56,11 +56,12 @@ const jsonLdFaq = {
   })),
 };
 
+const siteUrl = new URL(Astro.url.pathname, Astro.site).href.replace(/\/$/, '');
 const jsonLdWebApp = {
   '@context': 'https://schema.org',
   '@type': 'WebApplication',
   name: 'Aspect Ratio Calculator',
-  url: 'https://realaspectratiocalculate.com',
+  url: siteUrl,
   applicationCategory: 'UtilitiesApplication',
   operatingSystem: 'Web',
   description: 'Free aspect ratio calculator with 4 modes: find missing dimensions, convert any W×H to a named ratio, resize while preserving proportions, and scale by percentage.',

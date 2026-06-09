@@ -224,3 +224,72 @@ I addressed both. If it still looks off after you check, screenshot the specific
 
 Video-aspect-ratios Try buttons: You only asked for them on social-media. I didn't add them on the video page. If you want them there too, easy to add — same pattern.
 
+
+
+Resume session : claude --resume aba5fe19-4754-463d-acc4-1919030c87c4
+But better way to use calude is by using /clear
+
+
+# GitHub Pages Deployment Config (2026-06-09)
+
+Configured the site for temporary GitHub Pages deployment. Later, when buying the domain, only `astro.config.mjs` needs changing.
+
+## Changes made:
+
+### `package.json`
+- `engines.node` already set to `>=22.12.0` — no change needed.
+
+### `astro.config.mjs`
+- Already had the correct GitHub Pages config:
+  ```js
+  site: 'https://niranjan-gopal.github.io',
+  base: '/realaspectratiocalculate.com',
+  ```
+- Previous domain config left as a comment above for easy swap when domain is purchased.
+
+### `src/layouts/Layout.astro`
+- Added `basePath = (import.meta.env.BASE_URL || '/').replace(/\/?$/, '/')` to reliably get the deployment subpath with trailing slash.
+- Favicon `href` changed from `/favicon.svg` → `${basePath}favicon.svg` (and similar for `.ico`), so they resolve under GitHub Pages' subdirectory.
+- OG image URL now uses `new URL(ogImage.replace(/^\//, ''), new URL(basePath, Astro.site)).href` to correctly include the base path.
+- Added `<slot name="head" />` inside `<head>` — fixes a pre-existing bug where `<script type="application/ld+json" slot="head">` in page frontmatter was silently discarded (no matching named slot existed).
+
+### `src/pages/index.astro`
+- JSON-LD `WebApplication.url` changed from hardcoded `https://realaspectratiocalculate.com` → dynamic `new URL(Astro.url.pathname, Astro.site).href.replace(/\/$/, '')`.
+
+### `src/pages/video-aspect-ratios.astro`
+- Removed `canonical="https://realaspectratiocalculate.com/video-aspect-ratios/"`. Layout now computes the canonical dynamically from `Astro.site` + `Astro.url.pathname`.
+
+### `src/pages/how-to-calculate-aspect-ratio.astro`
+- Removed `canonical="https://realaspectratiocalculate.com/how-to-calculate-aspect-ratio/"`. Same as above.
+
+### `src/pages/social-media-aspect-ratios.astro`
+- Removed `canonical="https://realaspectratiocalculate.com/social-media-aspect-ratios/"`.
+- JSON-LD `Article.url` changed from hardcoded to dynamic `new URL(Astro.url.pathname, Astro.site).href.replace(/\/$/, '')`.
+- `author.name` kept as `realaspectratiocalculate.com` — that's the brand name, not a URL.
+
+### `src/components/Footer.astro`
+- No change. The copyright text `realaspectratiocalculate.com` is the brand/domain name — stays as-is.
+
+## Result
+
+- Build succeeds, dev server works.
+- All canonical URLs now point to `https://niranjan-gopal.github.io/realaspectratiocalculate.com/...` (GitHub Pages).
+- All JSON-LD now renders with correct dynamic URLs.
+- Favicon and OG image resolve under the base path.
+
+## Deploying to GitHub Pages
+1. Run `npm run build` — outputs to `dist/`.
+2. Push the `dist/` folder to the `gh-pages` branch (or use Astro's GitHub Pages deploy action).
+3. In GitHub repo Settings > Pages: set source to `gh-pages` branch, root folder.
+4. Site will be live at `https://niranjan-gopal.github.io/realaspectratiocalculate.com/`
+
+## Switching to custom domain later
+1. Buy domain (e.g., `realaspectratiocalculate.com`)
+2. Only `astro.config.mjs` needs changing:
+   ```js
+   site: 'https://realaspectratiocalculate.com',
+   // base: '/realaspectratiocalculate.com',  // remove or comment out
+   ```
+3. No other files need changing — all URLs are now dynamic.
+
+

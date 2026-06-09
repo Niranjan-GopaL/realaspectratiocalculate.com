@@ -88,12 +88,13 @@ function parsePx(s: string): [number, number] | null {
   return [parseInt(m[1]), parseInt(m[2])];
 }
 
+const siteUrl = new URL(Astro.url.pathname, Astro.site).href.replace(/\/$/, '');
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Article',
   headline: 'Social Media Aspect Ratios 2024. Complete Platform Guide',
   description: 'Every aspect ratio for Instagram, YouTube, TikTok, X, LinkedIn, Pinterest and Facebook with pixel dimensions and format notes.',
-  url: 'https://realaspectratiocalculate.com/social-media-aspect-ratios/',
+  url: siteUrl,
   author: { '@type': 'Organization', name: 'realaspectratiocalculate.com' },
 };
 ---
@@ -101,7 +102,6 @@ const jsonLd = {
 <Layout
   title="Social Media Aspect Ratios 2024. Instagram, YouTube, TikTok and More"
   description="Complete guide to social media aspect ratios. Every ratio and pixel dimension for Instagram, YouTube, TikTok, X (Twitter), LinkedIn, Pinterest, and Facebook."
-  canonical="https://realaspectratiocalculate.com/social-media-aspect-ratios/"
 >
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} slot="head" />
 
