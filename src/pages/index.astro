@@ -1,11 +1,253 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Calculator from '../components/Calculator.astro';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const commonRatios = [
+  { ratio: '16:9',   name: 'HD Widescreen',    use: 'YouTube, TV, monitors, presentations' },
+  { ratio: '9:16',   name: 'Portrait Video',   use: 'TikTok, Instagram Reels, YouTube Shorts' },
+  { ratio: '4:3',    name: 'Standard / iPad',  use: 'Classic TV, iPad, document scans' },
+  { ratio: '1:1',    name: 'Square',           use: 'Instagram posts, profile photos, album art' },
+  { ratio: '21:9',   name: 'Ultrawide Cinema', use: 'Ultrawide monitors, cinema film' },
+  { ratio: '3:2',    name: 'DSLR / 35mm Film', use: 'DSLR cameras, photography, Raspberry Pi display' },
+  { ratio: '2:1',    name: 'Univisium',        use: 'Netflix originals, some cinema productions' },
+  { ratio: '5:4',    name: 'Classic Monitor',  use: 'Older CRT monitors, printed photos (4×5 in)' },
+  { ratio: '2.35:1', name: 'CinemaScope',      use: 'Wide-release theatrical films' },
+  { ratio: '2.39:1', name: 'Anamorphic',       use: 'Blockbuster films, IMAX letterbox' },
+  { ratio: '4:5',    name: 'Portrait Photo',   use: 'Instagram portrait posts, 4×5 film' },
+  { ratio: '3:4',    name: 'Portrait Tablet',  use: 'iPad portrait, e-readers' },
+];
+
+const faqs = [
+  {
+    q: 'What is an aspect ratio?',
+    a: 'An aspect ratio is the proportional relationship between a frame\'s width and height. Expressed as W:H (for example 16:9), it describes shape, not size. A 1920×1080 screen and a 1280×720 screen share the same 16:9 ratio.',
+  },
+  {
+    q: 'How do I calculate aspect ratio from pixels?',
+    a: 'Divide both dimensions by their Greatest Common Divisor (GCD). For 1920×1080: GCD(1920,1080)=120, so 1920/120 : 1080/120 = 16:9. Use the "Find Ratio" mode above to do this instantly.',
+  },
+  {
+    q: 'How do I find a missing dimension given an aspect ratio?',
+    a: 'Multiply the known dimension by the ratio fraction. For a 16:9 image that is 1280px wide, height = 1280 × (9/16) = 720px. Use the "Find Dimension" mode above.',
+  },
+  {
+    q: 'What is the difference between 16:9 and 16:10?',
+    a: '16:9 (1.78:1) is the universal widescreen standard used by TVs and most monitors. 16:10 (1.60:1) is slightly taller. It is popular for laptop screens and productivity monitors because it shows more vertical content.',
+  },
+  {
+    q: 'What aspect ratio should I use for YouTube?',
+    a: 'YouTube recommends 16:9 (1920×1080 or 1280×720) for landscape videos, and 9:16 (1080×1920) for YouTube Shorts.',
+  },
+  {
+    q: 'Why does my image look stretched or cropped?',
+    a: 'This happens when the display container has a different aspect ratio than the image. Cropping removes outer pixels to match. Stretching distorts pixels. To avoid both, export images at the target container\'s exact aspect ratio, or use CSS object-fit: cover / contain.',
+  },
+];
+
+const jsonLdFaq = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map(f => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
+
+const jsonLdWebApp = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Aspect Ratio Calculator',
+  url: 'https://realaspectratiocalculate.com',
+  applicationCategory: 'UtilitiesApplication',
+  operatingSystem: 'Web',
+  description: 'Free aspect ratio calculator with 4 modes: find missing dimensions, convert any W×H to a named ratio, resize while preserving proportions, and scale by percentage.',
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
 ---
 
-<Layout>
-	<Welcome />
+<Layout
+  title="Aspect Ratio Calculator. Find Dimensions, Ratios, Resize. Free"
+  description="Free aspect ratio calculator. Find missing width or height, convert pixels to a named ratio (16:9, 4:3...), resize images, or scale by percentage. Live preview, no sign-up."
+>
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLdWebApp)} slot="head" />
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLdFaq)} slot="head" />
+
+  <Header />
+
+  <main>
+    <!-- Compact hero : professionals get to the calculator fast -->
+    <section class="bg-surface-dark text-on-dark py-8 md:py-10 border-b border-[rgba(255,255,255,0.08)]">
+      <div class="container-site">
+        <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+          <div>
+            <h1 class="text-[clamp(1.5rem,3.5vw,2.25rem)] font-bold leading-[0.95] mb-1.5">
+              Aspect Ratio Calculator
+            </h1>
+            <p class="text-[14px] text-[rgba(255,255,255,0.72)] max-w-[560px]">
+              Four modes : find missing dimensions, identify ratios, resize, or scale by percent. Live preview, no sign-up.
+            </p>
+          </div>
+          <div class="flex items-center gap-2">
+            <a href="#presets" class="hidden md:inline-flex items-center px-3 h-[30px] text-[11px] font-bold uppercase tracking-wider leading-none border rounded-[var(--radius-xs)] bg-transparent text-on-dark border-[rgba(255,255,255,0.24)] hover:bg-on-dark hover:text-ink no-underline transition-colors">
+              Jump to Presets
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Calculator : above the fold -->
+    <section class="py-8 md:py-10 bg-canvas dark:bg-surface-dark">
+      <div class="container-site">
+        <Calculator />
+      </div>
+    </section>
+
+    <!-- Platform-targeted links : keep professionals in flow -->
+    <section class="py-12 bg-surface-dark text-on-dark border-y border-[rgba(255,255,255,0.08)]">
+      <div class="container-site">
+        <h2 class="text-[18px] font-bold leading-tight mb-6">Explore by Platform</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-0 border border-[rgba(255,255,255,0.12)]">
+          {[
+            {
+              href: '/social-media-aspect-ratios/',
+              title: 'Social Media',
+              desc: 'Every ratio for Instagram, TikTok, YouTube, X, LinkedIn, Pinterest, and Facebook.',
+              badge: '9:16 · 1:1 · 4:5',
+            },
+            {
+              href: '/video-aspect-ratios/',
+              title: 'Video and Film',
+              desc: '16:9, 21:9, 2.39:1, every standard used in broadcast, streaming, and cinema.',
+              badge: '16:9 · 21:9 · 2.39:1',
+            },
+            {
+              href: '/how-to-calculate-aspect-ratio/',
+              title: 'How to Calculate',
+              desc: 'Step-by-step guide with formulas, worked examples, and common pitfalls.',
+              badge: 'GCD Method',
+            },
+          ].map((card) => (
+            <a
+              href={card.href}
+              class="group block p-6 border-b md:border-b-0 md:border-r border-[rgba(255,255,255,0.12)] last:border-0 hover:bg-surface-deep transition-colors no-underline"
+            >
+              <div class="inline-flex items-center bg-primary text-on-primary text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-[var(--radius-xs)] mb-3">
+                {card.badge}
+              </div>
+              <h3 class="text-[18px] font-bold text-on-dark mb-1 group-hover:text-primary transition-colors">{card.title}</h3>
+              <p class="text-[13px] text-[rgba(255,255,255,0.6)] leading-relaxed">{card.desc}</p>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- Common Aspect Ratios table -->
+    <section id="ratios" class="py-12 bg-canvas dark:bg-surface-dark">
+      <div class="container-site">
+        <div class="flex items-end justify-between gap-4 mb-6">
+          <div>
+            <h2 class="text-[20px] font-bold leading-tight text-ink dark:text-on-dark mb-1">Common Aspect Ratios</h2>
+            <p class="text-[13px] text-mute dark:text-[rgba(255,255,255,0.5)]">Every standard ratio used across video, photography, social media, and print.</p>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="border-b border-hairline dark:border-[rgba(255,255,255,0.12)]">
+                <th class="py-2.5 pr-6 text-[11px] font-bold uppercase tracking-wider text-charcoal dark:text-[rgba(255,255,255,0.5)]">Ratio</th>
+                <th class="py-2.5 pr-6 text-[11px] font-bold uppercase tracking-wider text-charcoal dark:text-[rgba(255,255,255,0.5)]">Name</th>
+                <th class="py-2.5 text-[11px] font-bold uppercase tracking-wider text-charcoal dark:text-[rgba(255,255,255,0.5)]">Common Use</th>
+              </tr>
+            </thead>
+            <tbody>
+              {commonRatios.map((r) => (
+                <tr class="border-b border-hairline dark:border-[rgba(255,255,255,0.06)] hover:bg-surface-soft dark:hover:bg-surface-deep transition-colors">
+                  <td class="py-3 pr-6">
+                    <span class="inline-flex items-center justify-center bg-primary text-on-primary text-[12px] font-bold px-2.5 py-1 rounded-[var(--radius-xs)]">
+                      {r.ratio}
+                    </span>
+                  </td>
+                  <td class="py-3 pr-6 text-[14px] font-bold text-ink dark:text-on-dark">{r.name}</td>
+                  <td class="py-3 text-[13px] text-mute dark:text-[rgba(255,255,255,0.6)]">{r.use}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="py-12 bg-surface-soft dark:bg-surface-deep border-t border-hairline dark:border-[rgba(255,255,255,0.08)]">
+      <div class="container-site">
+        <div class="max-w-[800px]">
+          <h2 class="text-[20px] font-bold leading-tight text-ink dark:text-on-dark mb-6">
+            Frequently Asked Questions
+          </h2>
+          <div class="divide-y divide-hairline dark:divide-[rgba(255,255,255,0.08)]">
+            {faqs.map((faq) => (
+              <details class="group py-4">
+                <summary class="flex items-center justify-between gap-4 cursor-pointer list-none text-[15px] font-bold text-ink dark:text-on-dark hover:text-primary transition-colors">
+                  {faq.q}
+                  <svg class="w-5 h-5 shrink-0 text-mute transition-transform group-open:rotate-180" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                  </svg>
+                </summary>
+                <p class="mt-3 text-[14px] text-body dark:text-[rgba(255,255,255,0.72)] leading-relaxed">{faq.a}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Educational : what is aspect ratio. Kept brief, at the bottom for SEO without slowing professionals down. -->
+    <section class="py-12 bg-canvas dark:bg-surface-dark border-t border-hairline dark:border-[rgba(255,255,255,0.08)]">
+      <div class="container-site">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
+          <div class="max-w-[600px]">
+            <h2 class="text-[20px] font-bold leading-tight text-ink dark:text-on-dark mb-3">
+              What is aspect ratio?
+            </h2>
+            <p class="text-[14px] text-body dark:text-[rgba(255,255,255,0.72)] leading-relaxed mb-3">
+              Aspect ratio describes the proportional relationship between a frame's width and its height, written as <strong>W:H</strong>.
+              It defines shape, not size. A 1920×1080 TV and a 640×360 window share the same <strong>16:9</strong> ratio.
+            </p>
+            <p class="text-[14px] text-body dark:text-[rgba(255,255,255,0.72)] leading-relaxed mb-4">
+              Getting the ratio right prevents stretching, unwanted cropping, letterboxing, or pillarboxing. It is critical for video production, web design, photography, and print layout.
+            </p>
+            <a href="/how-to-calculate-aspect-ratio/" class="link-brand dark:text-on-dark">
+              Read the full guide
+            </a>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            {[
+              { ratio: '16:9', pw: 140, ph: 79,  label: 'HD Video' },
+              { ratio: '1:1',  pw: 110, ph: 110, label: 'Square' },
+              { ratio: '4:3',  pw: 120, ph: 90,  label: 'Classic' },
+              { ratio: '9:16', pw: 79,  ph: 140, label: 'Portrait' },
+            ].map((box) => (
+              <div class="flex flex-col items-center justify-center gap-2 p-4 bg-surface-soft dark:bg-surface-deep border border-hairline dark:border-[rgba(255,255,255,0.08)]">
+                <div
+                  class="bg-ink dark:bg-on-dark"
+                  style={`width:${box.pw}px;height:${box.ph}px;max-width:100%;`}
+                  aria-hidden="true"
+                />
+                <span class="text-[12px] font-bold text-charcoal dark:text-[rgba(255,255,255,0.5)]">{box.ratio}</span>
+                <span class="text-[11px] text-mute dark:text-[rgba(255,255,255,0.4)]">{box.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
 </Layout>

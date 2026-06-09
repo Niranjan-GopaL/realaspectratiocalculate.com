@@ -1,0 +1,233 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+const examples = [
+  { input: '1920 × 1080', gcd: 120, result: '16:9', decimal: '1.778:1' },
+  { input: '2560 × 1440', gcd: 80,  result: '16:9', decimal: '1.778:1' },
+  { input: '1024 × 768',  gcd: 256, result: '4:3',  decimal: '1.333:1' },
+  { input: '1080 × 1920', gcd: 120, result: '9:16', decimal: '0.5625:1' },
+  { input: '1000 × 1000', gcd: 1000, result: '1:1', decimal: '1.000:1' },
+  { input: '2048 × 858',  gcd: 2,   result: '1024:429', decimal: '2.387:1' },
+];
+
+const methods = [
+  {
+    title: 'GCD (Greatest Common Divisor)',
+    steps: [
+      'Start with your width (W) and height (H) in pixels.',
+      'Find the Greatest Common Divisor: GCD(W, H).',
+      'Divide both W and H by the GCD.',
+      'The result is your simplified aspect ratio W/GCD : H/GCD.',
+    ],
+    example: 'Given 1920 × 1080. GCD(1920, 1080) = 120. Therefore 1920/120 : 1080/120 = 16:9',
+  },
+  {
+    title: 'Decimal Ratio',
+    steps: [
+      'Divide width by height: ratio = W ÷ H.',
+      'Express as X:1 (for example, 1.78:1).',
+      'This form is common in cinema (2.39:1) and broadcast specs.',
+    ],
+    example: 'Given 1920 ÷ 1080 = 1.7777... rounded to 1.78:1',
+  },
+  {
+    title: 'Find a Missing Dimension',
+    steps: [
+      'Know the ratio (e.g., 16:9) and one dimension.',
+      'To find height: H = W × (ratio_height / ratio_width).',
+      'To find width: W = H × (ratio_width / ratio_height).',
+    ],
+    example: 'Given Width = 1280 at 16:9. Then Height = 1280 × (9/16) = 720',
+  },
+  {
+    title: 'Scale by Percentage',
+    steps: [
+      'Start with known width W and height H.',
+      'Multiply both by your scale factor: new_W = W × (pct/100), new_H = H × (pct/100).',
+      'Rounding to whole pixels preserves the ratio exactly.',
+    ],
+    example: 'Given 1920×1080 at 50%. Result is 960×540, still 16:9',
+  },
+];
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  name: 'How to Calculate Aspect Ratio',
+  description: 'Step-by-step guide to calculating aspect ratios using the GCD method, decimal method, and dimension formulas.',
+  step: methods.map((m, i) => ({
+    '@type': 'HowToStep',
+    position: i + 1,
+    name: m.title,
+    text: m.steps.join(' '),
+  })),
+};
+---
+
+<Layout
+  title="How to Calculate Aspect Ratio. GCD Method, Formulas, Examples"
+  description="Learn how to calculate aspect ratio using the GCD method, the decimal ratio method, and proportion formulas. Includes worked examples for common resolutions."
+  canonical="https://realaspectratiocalculate.com/how-to-calculate-aspect-ratio/"
+>
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} slot="head" />
+
+  <Header />
+
+  <main>
+    <!-- Hero : compact -->
+    <section class="bg-surface-dark text-on-dark py-10 md:py-12 border-b border-[rgba(255,255,255,0.08)]">
+      <div class="container-site">
+        <a href="/" class="inline-flex items-center gap-1.5 text-[12px] font-bold uppercase tracking-wider text-[rgba(255,255,255,0.5)] hover:text-primary mb-4 no-underline transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+          Back to Calculator
+        </a>
+        <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+          <div>
+            <h1 class="text-[clamp(1.75rem,4vw,2.5rem)] font-bold leading-[0.95] mb-2">
+              How to Calculate Aspect Ratio
+            </h1>
+            <p class="text-[15px] text-[rgba(255,255,255,0.72)] max-w-[560px]">
+              Four methods, step by step, with worked examples.
+            </p>
+          </div>
+          <a href="/" class="btn-primary self-start">Open Calculator</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Intro : same padding as hero so transition is balanced -->
+    <section class="py-10 md:py-12 bg-canvas dark:bg-surface-dark">
+      <div class="container-site">
+        <div class="max-w-[800px]">
+          <p class="text-[16px] text-body dark:text-[rgba(255,255,255,0.72)] leading-relaxed mb-4">
+            Aspect ratio is the proportional relationship between width and height, written W:H.
+            The same ratio applies to a postage stamp or an IMAX screen. It describes <em>shape</em>, not <em>size</em>.
+          </p>
+          <p class="text-[16px] text-body dark:text-[rgba(255,255,255,0.72)] leading-relaxed mb-5">
+            Four practical problems professionals face:
+          </p>
+          <ol class="list-none space-y-2 mb-6 pl-0">
+            {['Given W×H, what is the ratio?', 'Given a ratio plus one dimension, what is the other?', 'Given an original and a new width, what is the new height?', 'Given an original and a scale %, what are the new dimensions?'].map((item, i) => (
+              <li class="flex items-center gap-3 text-[15px] text-body dark:text-[rgba(255,255,255,0.72)]">
+                <span class="flex items-center justify-center w-6 h-6 rounded-[var(--radius-full)] bg-primary text-on-primary text-[12px] font-bold shrink-0">{i+1}</span>
+                {item}
+              </li>
+            ))}
+          </ol>
+          <a href="/" class="btn-primary">Open Calculator</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Methods : consistent container -->
+    {methods.map((method, i) => (
+      <section class={`py-12 border-t border-hairline dark:border-[rgba(255,255,255,0.08)] ${i % 2 === 1 ? 'bg-surface-soft dark:bg-surface-deep' : 'bg-canvas dark:bg-surface-dark'}`}>
+        <div class="container-site">
+          <div class="max-w-[800px]">
+            <p class="text-[10px] font-bold uppercase tracking-wider text-mute dark:text-[rgba(255,255,255,0.45)] mb-2">Method {i+1}</p>
+            <h2 class="text-[24px] font-bold text-ink dark:text-on-dark mb-6">{method.title}</h2>
+            <ol class="space-y-3 mb-6 list-none pl-0">
+              {method.steps.map((step, si) => (
+                <li class="flex items-start gap-3">
+                  <span class="text-[11px] font-bold text-mute dark:text-[rgba(255,255,255,0.4)] font-mono mt-1 shrink-0">0{si+1}</span>
+                  <p class="text-[15px] text-body dark:text-[rgba(255,255,255,0.72)] leading-relaxed">{step}</p>
+                </li>
+              ))}
+            </ol>
+            <div class="bg-surface-dark dark:bg-surface-elevated relative">
+              <div class="h-1 bg-primary"></div>
+              <div class="px-5 py-4">
+                <p class="text-[10px] text-[rgba(255,255,255,0.5)] mb-1.5 font-bold uppercase tracking-wider">Worked Example</p>
+                <p class="text-[14px] text-on-dark font-mono leading-relaxed">{method.example}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    ))}
+
+    <!-- GCD walkthrough table : consistent container -->
+    <section class="py-12 border-t border-hairline dark:border-[rgba(255,255,255,0.08)] bg-canvas dark:bg-surface-dark">
+      <div class="container-site">
+        <div class="max-w-[800px]">
+          <h2 class="text-[24px] font-bold text-ink dark:text-on-dark mb-2">
+            GCD Method, Worked Examples
+          </h2>
+          <p class="text-[14px] text-mute dark:text-[rgba(255,255,255,0.5)] mb-6">Common resolutions reduced to their simplest ratio.</p>
+        </div>
+        <div class="max-w-[800px] overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="border-b border-hairline dark:border-[rgba(255,255,255,0.12)]">
+                {['Resolution', 'GCD', 'Simplified Ratio', 'Decimal'].map(h => (
+                  <th class="py-3 pr-8 text-[11px] font-bold uppercase tracking-wider text-charcoal dark:text-[rgba(255,255,255,0.5)]">{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {examples.map((ex) => (
+                <tr class="border-b border-hairline dark:border-[rgba(255,255,255,0.06)] hover:bg-surface-soft dark:hover:bg-surface-deep transition-colors">
+                  <td class="py-3.5 pr-8 text-[14px] font-mono font-bold text-ink dark:text-on-dark">{ex.input}</td>
+                  <td class="py-3.5 pr-8 text-[14px] font-mono text-mute dark:text-[rgba(255,255,255,0.5)]">{ex.gcd}</td>
+                  <td class="py-3.5 pr-8">
+                    <span class="inline-flex items-center bg-primary text-on-primary text-[13px] font-bold px-3 py-1 rounded-[var(--radius-xs)]">{ex.result}</span>
+                  </td>
+                  <td class="py-3.5 text-[14px] font-mono text-mute dark:text-[rgba(255,255,255,0.5)]">{ex.decimal}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pitfalls -->
+    <section class="py-12 bg-surface-soft dark:bg-surface-deep border-t border-hairline dark:border-[rgba(255,255,255,0.08)]">
+      <div class="container-site">
+        <div class="max-w-[800px]">
+          <h2 class="text-[24px] font-bold text-ink dark:text-on-dark mb-6">Common Pitfalls</h2>
+          <div class="space-y-5">
+            {[
+              {
+                title: 'Rounding removes the common ratio',
+                body: 'A 2048×858 frame is often listed as 2.39:1, but its GCD is 2, reducing to 1024:429. This is exact, while 2048/858 = 2.387:1. Avoid rounding intermediate results.',
+              },
+              {
+                title: 'Display ratio is not storage ratio',
+                body: 'Anamorphic footage is stored in non-square pixels (PAR ≠ 1:1). A 1440×1080 anamorphic frame displays as 16:9 when pixels are stretched to PAR 4:3. Always check the display aspect ratio (DAR), not just frame pixels.',
+              },
+              {
+                title: 'Safe zone confusion',
+                body: 'Social platforms crop content to fit containers. A 16:9 1080p video on a portrait screen shows only the center. Export at the target ratio, or design within the safe zone.',
+              },
+              {
+                title: 'Non-integer ratios',
+                body: 'Cinema standards like 2.35:1 and 2.39:1 are decimal ratios, not whole-number ratios. They arise from masking a 4-perf film frame. Never force these into integer W:H form for mastering.',
+              },
+            ].map((pitfall) => (
+              <div class="border-l-2 border-primary pl-5">
+                <h3 class="text-[15px] font-bold text-ink dark:text-on-dark mb-1">{pitfall.title}</h3>
+                <p class="text-[14px] text-body dark:text-[rgba(255,255,255,0.6)] leading-relaxed">{pitfall.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="py-12 bg-primary">
+      <div class="container-site flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-[1.5rem] font-bold leading-tight text-on-primary mb-1">Skip the math.</h2>
+          <p class="text-[14px] text-on-primary opacity-80">All four methods are available as interactive modes in the calculator.</p>
+        </div>
+        <a href="/" class="btn-dark shrink-0">Open Calculator</a>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>

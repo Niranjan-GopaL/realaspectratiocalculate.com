@@ -1,0 +1,189 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Inter Tight", system-ui, sans-serif;
+
+  --color-primary: #ffed00;
+  --color-primary-deep: #e6d200;
+  --color-on-primary: #000000;
+  --color-ink: #000000;
+  --color-body: #222222;
+  --color-charcoal: #333333;
+  --color-mute: #666666;
+  --color-ash: #8a8a8a;
+  --color-stone: #c4c4c4;
+  --color-on-dark: #ffffff;
+  --color-canvas: #ffffff;
+  --color-surface-soft: #f7f7f7;
+  --color-surface-dark: #000000;
+  --color-surface-deep: #111111;
+  --color-surface-elevated: #1a1a1a;
+  --color-hairline: #f2f2f2;
+  --color-hairline-strong: #000000;
+
+  --radius-xs: 2px;
+  --radius-sm: 3px;
+  --radius-md: 4px;
+  --radius-pill: 46px;
+  --radius-full: 9999px;
+}
+
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--color-canvas);
+    color: var(--color-body);
+  }
+
+  .dark body {
+    background-color: var(--color-surface-dark);
+    color: var(--color-on-dark);
+  }
+}
+
+@utility container-site {
+  width: 100%;
+  max-width: 1440px;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+}
+
+@utility btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+  font-weight: 700;
+  font-size: 14.4px;
+  letter-spacing: 0.144px;
+  line-height: 1;
+  padding: 14px 24px;
+  border-radius: var(--radius-xs);
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.15s;
+}
+
+@utility btn-primary-pressed {
+  background-color: var(--color-primary-deep);
+}
+
+@utility btn-dark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: var(--color-surface-dark);
+  color: var(--color-on-dark);
+  font-weight: 700;
+  font-size: 14.4px;
+  letter-spacing: 0.144px;
+  line-height: 1;
+  padding: 14px 24px;
+  border-radius: var(--radius-xs);
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity 0.15s;
+}
+
+@utility btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: transparent;
+  color: var(--color-ink);
+  font-weight: 700;
+  font-size: 14.4px;
+  letter-spacing: 0.144px;
+  line-height: 1;
+  padding: 13px 23px;
+  border-radius: var(--radius-xs);
+  border: 1px solid var(--color-hairline-strong);
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.15s;
+}
+
+@utility btn-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.13px;
+  line-height: 1.2;
+  padding: 8px 16px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-hairline-strong);
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.15s, color 0.15s;
+  height: 36px;
+  white-space: nowrap;
+}
+
+@utility field-input {
+  width: 100%;
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+  padding: 12px 16px;
+  border: 1px solid var(--color-hairline);
+  border-bottom: 2px solid var(--color-hairline-strong);
+  border-radius: 0;
+  outline: none;
+  height: 48px;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+
+@utility field-input-dark {
+  background-color: var(--color-surface-dark);
+  color: var(--color-on-dark);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.48);
+}
+
+/* Brand-highlighted inline link : works in both modes without yellow text on white */
+@utility link-brand {
+  color: var(--color-ink);
+  font-weight: 700;
+  text-decoration: none;
+  border-bottom: 2px solid var(--color-primary);
+  padding-bottom: 1px;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+/* Sectional yellow divider strip : signals the Renault accent without text contrast issues */
+@utility accent-strip {
+  position: relative;
+}
+.accent-strip::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 32px;
+  height: 4px;
+  background-color: var(--color-primary);
+}

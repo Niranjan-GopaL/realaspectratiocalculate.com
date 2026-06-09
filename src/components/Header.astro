@@ -1,0 +1,112 @@
+---
+const navLinks = [
+  { href: '/social-media-aspect-ratios/', label: 'Social Media' },
+  { href: '/video-aspect-ratios/', label: 'Video Ratios' },
+  { href: '/how-to-calculate-aspect-ratio/', label: 'Guide' },
+];
+
+const currentPath = Astro.url.pathname;
+---
+
+<header
+  class="sticky top-0 z-50 bg-canvas dark:bg-surface-dark border-b border-hairline dark:border-[rgba(255,255,255,0.12)]"
+  style="height:60px;"
+>
+  <div class="container-site h-full flex items-center justify-between gap-6">
+    <!-- Logo : black diamond in light, white diamond in dark, with yellow accent dot inside (no yellow text) -->
+    <a
+      href="/"
+      class="flex items-center gap-2.5 text-ink dark:text-on-dark no-underline shrink-0"
+      aria-label="Aspect Ratio Calculator home"
+    >
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+        <!-- Outer diamond ring : ink on light, white on dark -->
+        <path
+          d="M14 2L26 14L14 26L2 14L14 2ZM14 8L8 14L14 20L20 14L14 8Z"
+          fill-rule="evenodd"
+          class="fill-ink dark:fill-on-dark"
+        />
+        <!-- Yellow accent dot inside : works on both backgrounds -->
+        <circle cx="14" cy="14" r="2.5" fill="#ffed00" />
+      </svg>
+      <span class="font-bold text-[18px] leading-none tracking-tight">
+        AspectRatio<span class="font-normal text-mute dark:text-[rgba(255,255,255,0.5)]">.calc</span>
+      </span>
+    </a>
+
+    <!-- Desktop nav -->
+    <nav class="hidden md:flex items-center gap-1" aria-label="Main navigation">
+      {navLinks.map((link) => (
+        <a
+          href={link.href}
+          class={[
+            "px-4 py-2 text-[14.4px] font-bold leading-none rounded-[var(--radius-xs)] transition-colors no-underline",
+            currentPath === link.href
+              ? "bg-primary text-on-primary"
+              : "text-charcoal dark:text-[rgba(255,255,255,0.72)] hover:text-ink dark:hover:text-on-dark",
+          ].join(' ')}
+        >
+          {link.label}
+        </a>
+      ))}
+    </nav>
+
+    <!-- Right : dark mode toggle + mobile menu -->
+    <div class="flex items-center gap-2">
+      <button
+        id="theme-toggle"
+        aria-label="Toggle dark mode"
+        class="w-10 h-10 flex items-center justify-center rounded-[var(--radius-xs)] border border-hairline-strong dark:border-[rgba(255,255,255,0.24)] text-ink dark:text-on-dark hover:bg-surface-soft dark:hover:bg-surface-deep transition-colors"
+      >
+        <svg class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+        <svg class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+
+      <button
+        id="mobile-menu-btn"
+        aria-label="Open menu"
+        aria-expanded="false"
+        class="md:hidden w-10 h-10 flex items-center justify-center rounded-[var(--radius-xs)] border border-hairline-strong dark:border-[rgba(255,255,255,0.24)] text-ink dark:text-on-dark"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div
+    id="mobile-menu"
+    class="hidden md:hidden absolute top-[60px] left-0 right-0 bg-canvas dark:bg-surface-deep border-b border-hairline dark:border-[rgba(255,255,255,0.12)] shadow-lg"
+  >
+    <nav class="container-site py-4 flex flex-col gap-1">
+      {navLinks.map((link) => (
+        <a
+          href={link.href}
+          class="px-4 py-3 text-[14.4px] font-bold text-ink dark:text-on-dark no-underline hover:bg-surface-soft dark:hover:bg-surface-dark rounded-[var(--radius-xs)]"
+        >
+          {link.label}
+        </a>
+      ))}
+    </nav>
+  </div>
+</header>
+
+<script>
+  const btn = document.getElementById('theme-toggle');
+  btn?.addEventListener('click', () => {
+    const isDark = document.documentElement.classList.toggle('dark');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  });
+
+  const menuBtn = document.getElementById('mobile-menu-btn');
+  const mobileMenu = document.getElementById('mobile-menu');
+  menuBtn?.addEventListener('click', () => {
+    const open = mobileMenu?.classList.toggle('hidden') === false;
+    menuBtn.setAttribute('aria-expanded', String(open));
+  });
+</script>

@@ -1,0 +1,201 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+const videoRatios = [
+  {
+    ratio: '16:9', decimal: '1.78:1', name: 'HD Widescreen',
+    resolutions: ['3840×2160 (4K)', '1920×1080 (1080p)', '1280×720 (720p)', '854×480 (480p)'],
+    use: 'Universal broadcast standard. YouTube, Vimeo, Netflix, Twitch, broadcast TV.',
+    note: 'If you only shoot one ratio, shoot 16:9.',
+  },
+  {
+    ratio: '9:16', decimal: '0.56:1', name: 'Vertical Video',
+    resolutions: ['1080×1920', '720×1280'],
+    use: 'TikTok, Instagram Reels, YouTube Shorts, Snapchat.',
+    note: 'Dominates mobile-first platforms. Film with safe zones for UI overlays.',
+  },
+  {
+    ratio: '4:3', decimal: '1.33:1', name: 'Standard Definition',
+    resolutions: ['1440×1080', '1024×768', '720×576 (PAL)', '720×480 (NTSC)'],
+    use: 'Legacy broadcast TV, DVD, security cameras, some industrial cameras.',
+    note: 'Displayed with pillarboxing (black bars) on 16:9 screens.',
+  },
+  {
+    ratio: '21:9', decimal: '2.33:1', name: 'Ultrawide',
+    resolutions: ['3440×1440', '2560×1080'],
+    use: 'Ultrawide monitor gaming, streaming content for ultrawide displays.',
+    note: 'Not a cinema standard. Cinema uses 2.35:1 or 2.39:1.',
+  },
+  {
+    ratio: '2.35:1', decimal: '2.35:1', name: 'CinemaScope / Panavision',
+    resolutions: ['2048×871', '4096×1743'],
+    use: 'Wide-release theatrical feature films (pre-1990s standard).',
+    note: 'Now largely superseded by 2.39:1 in practice.',
+  },
+  {
+    ratio: '2.39:1', decimal: '2.39:1', name: 'Anamorphic Widescreen',
+    resolutions: ['2048×856', '4096×1714'],
+    use: 'Modern theatrical films. Blockbuster cinema (Marvel, Star Wars, etc.).',
+    note: 'Sometimes listed as 2.40:1 due to rounding in different standards.',
+  },
+  {
+    ratio: '2:1', decimal: '2:1', name: 'Univisium',
+    resolutions: ['2048×1024', '3840×1920', '1920×960'],
+    use: 'Netflix originals, some Amazon productions, web video.',
+    note: 'Proposed by Vittorio Storaro as a universal format between 1.85:1 and 2.39:1.',
+  },
+  {
+    ratio: '1.85:1', decimal: '1.85:1', name: 'US Flat / Academy Flat',
+    resolutions: ['1998×1080 (2K DCP)', '3996×2160 (4K DCP)'],
+    use: 'Domestic US theatrical projection and DCP (Digital Cinema Package).',
+    note: 'The primary alternative to 2.39:1 in US theatrical releases.',
+  },
+  {
+    ratio: '1:1', decimal: '1:1', name: 'Square Video',
+    resolutions: ['1080×1080', '720×720'],
+    use: 'Instagram feed, Facebook feed, some art/music video contexts.',
+    note: 'Shows 78% more screen space than 16:9 in mobile feeds.',
+  },
+  {
+    ratio: '1.33:1', decimal: '1.33:1', name: 'Academy Ratio (Silent Era)',
+    resolutions: ['2048×1536 (2K)', '4096×3072 (4K)'],
+    use: 'Classic Hollywood films, archival restoration. Beau Is Afraid, The Lighthouse.',
+    note: 'Equal to 4:3. Sometimes used deliberately for artistic claustrophobia.',
+  },
+];
+
+const streamingSpecs = [
+  { platform: 'YouTube',    ratio: '16:9',  max: '3840×2160 (4K)', codec: 'H.264 / H.265', fps: 'up to 60' },
+  { platform: 'Netflix',    ratio: '16:9',  max: '3840×2160 (4K)', codec: 'H.264 / HEVC', fps: 'up to 60' },
+  { platform: 'Vimeo',      ratio: '16:9',  max: '8192×4320 (8K)', codec: 'H.264 / H.265', fps: 'up to 60' },
+  { platform: 'Twitch',     ratio: '16:9',  max: '1920×1080 (1080p60)', codec: 'H.264', fps: 'up to 60' },
+  { platform: 'Instagram',  ratio: '9:16',  max: '1080×1920', codec: 'H.264', fps: 'up to 30' },
+  { platform: 'TikTok',     ratio: '9:16',  max: '1080×1920', codec: 'H.264 / H.265', fps: 'up to 60' },
+];
+---
+
+<Layout
+  title="Video Aspect Ratios. 16:9, 21:9, 2.39:1 and Cinema Standards"
+  description="Complete video aspect ratio guide: 16:9 HD, 9:16 vertical, 4:3 SD, 21:9 ultrawide, 2.35:1 and 2.39:1 cinema, plus streaming platform specs."
+  canonical="https://realaspectratiocalculate.com/video-aspect-ratios/"
+>
+  <Header />
+
+  <main>
+    <!-- Hero -->
+    <section class="bg-surface-dark text-on-dark py-10 md:py-12 border-b border-[rgba(255,255,255,0.08)]">
+      <div class="container-site">
+        <a href="/" class="inline-flex items-center gap-1.5 text-[12px] font-bold uppercase tracking-wider text-[rgba(255,255,255,0.5)] hover:text-primary mb-4 no-underline transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+          Back to Calculator
+        </a>
+        <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+          <div>
+            <h1 class="text-[clamp(1.75rem,4vw,2.5rem)] font-bold leading-[0.95] mb-2">
+              Video Aspect Ratios
+            </h1>
+            <p class="text-[15px] text-[rgba(255,255,255,0.72)] leading-relaxed max-w-[560px]">
+              Every ratio used in broadcast, streaming, and cinema. Resolutions, standards, and platform specs.
+            </p>
+          </div>
+          <a href="/" class="btn-primary self-start">Open Calculator</a>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- Streaming specs -->
+    <section class="py-16 bg-surface-soft dark:bg-surface-deep">
+      <div class="container-site">
+        <h2 class="text-[clamp(1.25rem,2.5vw,1.75rem)] font-bold text-ink dark:text-on-dark mb-2">Streaming Platform Specs</h2>
+        <p class="text-[15px] text-mute dark:text-[rgba(255,255,255,0.5)] mb-8">Recommended export settings for direct upload.</p>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="border-b border-hairline dark:border-[rgba(255,255,255,0.1)]">
+                {['Platform', 'Ratio', 'Max Resolution', 'Codec', 'Max FPS'].map(h => (
+                  <th class="py-3 pr-6 text-[12px] font-bold uppercase tracking-wider text-charcoal dark:text-[rgba(255,255,255,0.5)]">{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {streamingSpecs.map((s) => (
+                <tr class="border-b border-hairline dark:border-[rgba(255,255,255,0.06)] hover:bg-hairline dark:hover:bg-surface-dark transition-colors">
+                  <td class="py-3.5 pr-6 text-[14px] font-bold text-ink dark:text-on-dark">{s.platform}</td>
+                  <td class="py-3.5 pr-6">
+                    <span class="inline-flex items-center bg-primary text-on-primary text-[12px] font-bold px-2.5 py-0.5 rounded-[var(--radius-xs)]">{s.ratio}</span>
+                  </td>
+                  <td class="py-3.5 pr-6 text-[14px] font-mono text-mute dark:text-[rgba(255,255,255,0.6)]">{s.max}</td>
+                  <td class="py-3.5 pr-6 text-[14px] text-mute dark:text-[rgba(255,255,255,0.6)]">{s.codec}</td>
+                  <td class="py-3.5 text-[14px] text-mute dark:text-[rgba(255,255,255,0.6)]">{s.fps}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- Ratio cards -->
+    <section class="py-16 bg-canvas dark:bg-surface-dark">
+      <div class="container-site">
+        <h2 class="text-[clamp(1.25rem,2.5vw,1.75rem)] font-bold text-ink dark:text-on-dark mb-10">Video & Cinema Ratios</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-0 border border-hairline dark:border-[rgba(255,255,255,0.1)]">
+          {videoRatios.map((r, i) => (
+            <article class={[
+              "p-6 border-b border-hairline dark:border-[rgba(255,255,255,0.08)]",
+              i % 2 === 0 ? "md:border-r" : "",
+            ].join(' ')}>
+              <div class="flex items-start justify-between gap-4 mb-3">
+                <div>
+                  <span class="inline-flex items-center bg-primary text-on-primary text-[13px] font-bold px-3 py-1 rounded-[var(--radius-xs)] mb-2">
+                    {r.ratio}
+                  </span>
+                  <h3 class="text-[16px] font-bold text-ink dark:text-on-dark">{r.name}</h3>
+                  <p class="text-[12px] text-mute dark:text-[rgba(255,255,255,0.4)]">{r.decimal}</p>
+                </div>
+                <!-- Mini visual preview -->
+                <div class="shrink-0 flex items-center justify-center bg-surface-soft dark:bg-surface-deep rounded-[var(--radius-xs)] p-2" style="width:72px;height:56px;">
+                  {(() => {
+                    const [rw, rh] = r.ratio.includes(':') ? r.ratio.split(':').map(Number) : [parseFloat(r.decimal), 1];
+                    const ratio = rw / rh;
+                    const mw = 56, mh = 44;
+                    let pw = mw, ph = mw / ratio;
+                    if (ph > mh) { ph = mh; pw = mh * ratio; }
+                    pw = Math.round(Math.min(pw, mw));
+                    ph = Math.round(Math.min(ph, mh));
+                    return <div class="bg-ink dark:bg-on-dark rounded-[1px]" style={`width:${pw}px;height:${ph}px`} aria-hidden="true" />;
+                  })()}
+                </div>
+              </div>
+              <p class="text-[13px] text-body dark:text-[rgba(255,255,255,0.72)] mb-2">{r.use}</p>
+              <p class="text-[12px] text-mute dark:text-[rgba(255,255,255,0.4)] italic">{r.note}</p>
+              <div class="mt-3 flex flex-wrap gap-1.5">
+                {r.resolutions.map((res) => (
+                  <span class="text-[11px] font-mono bg-surface-soft dark:bg-surface-deep text-charcoal dark:text-[rgba(255,255,255,0.5)] px-2 py-0.5 rounded-[var(--radius-xs)]">{res}</span>
+                ))}
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+
+    <!-- CTA -->
+    <section class="py-16 bg-surface-dark">
+      <div class="container-site flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+        <div>
+          <h2 class="text-[1.5rem] font-bold text-on-dark mb-2">Calculate your video dimensions</h2>
+          <p class="text-[15px] text-[rgba(255,255,255,0.6)]">Find any missing dimension for your timeline in seconds.</p>
+        </div>
+        <a href="/" class="btn-primary shrink-0">Open Calculator</a>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>
