@@ -3,6 +3,8 @@ import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
 const videoRatios = [
   {
     ratio: '16:9', decimal: '1.78:1', name: 'HD Widescreen',
@@ -67,13 +69,24 @@ const videoRatios = [
 ];
 
 const streamingSpecs = [
-  { platform: 'YouTube',    ratio: '16:9',  max: '3840×2160 (4K)', codec: 'H.264 / H.265', fps: 'up to 60' },
-  { platform: 'Netflix',    ratio: '16:9',  max: '3840×2160 (4K)', codec: 'H.264 / HEVC', fps: 'up to 60' },
-  { platform: 'Vimeo',      ratio: '16:9',  max: '8192×4320 (8K)', codec: 'H.264 / H.265', fps: 'up to 60' },
-  { platform: 'Twitch',     ratio: '16:9',  max: '1920×1080 (1080p60)', codec: 'H.264', fps: 'up to 60' },
-  { platform: 'Instagram',  ratio: '9:16',  max: '1080×1920', codec: 'H.264', fps: 'up to 30' },
-  { platform: 'TikTok',     ratio: '9:16',  max: '1080×1920', codec: 'H.264 / H.265', fps: 'up to 60' },
+  { platform: 'YouTube',    ratio: '16:9',  max: '3840×2160 (4K)',  codec: 'H.264 / H.265', fps: 'up to 60' },
+  { platform: 'Netflix',    ratio: '16:9',  max: '3840×2160 (4K)',  codec: 'H.264 / HEVC',  fps: 'up to 60' },
+  { platform: 'Vimeo',      ratio: '16:9',  max: '8192×4320 (8K)',  codec: 'H.264 / H.265', fps: 'up to 60' },
+  { platform: 'Twitch',     ratio: '16:9',  max: '1920×1080 (1080p60)', codec: 'H.264',     fps: 'up to 60' },
+  { platform: 'Instagram',  ratio: '9:16',  max: '1080×1920',       codec: 'H.264',         fps: 'up to 30' },
+  { platform: 'TikTok',     ratio: '9:16',  max: '1080×1920',       codec: 'H.264 / H.265', fps: 'up to 60' },
 ];
+
+function parsePx(s: string): [number, number] | null {
+  const m = s.match(/(\d+)\s*[×x]\s*(\d+)/);
+  if (!m) return null;
+  return [parseInt(m[1]), parseInt(m[2])];
+}
+
+function tryHref(s: string): string {
+  const p = parsePx(s);
+  return p ? `${base}/?w=${p[0]}&h=${p[1]}` : `${base}/`;
+}
 ---
 
 <Layout
@@ -84,51 +97,69 @@ const streamingSpecs = [
 
   <main>
     <!-- Hero -->
-    <section class="bg-surface-dark text-on-dark py-10 md:py-12 border-b border-[rgba(255,255,255,0.08)]">
+    <section class="bg-surface-dark text-on-dark py-8 sm:py-10 md:py-12 border-b border-[rgba(255,255,255,0.08)]">
       <div class="container-site">
-        <a href="/" class="inline-flex items-center gap-1.5 text-[12px] font-bold uppercase tracking-wider text-[rgba(255,255,255,0.5)] hover:text-primary mb-4 no-underline transition-colors">
+        <a href={`${base}/`} class="inline-flex items-center gap-1.5 text-[12px] font-bold uppercase tracking-wider text-[rgba(255,255,255,0.5)] hover:text-primary mb-4 no-underline transition-colors">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
           Back to Calculator
         </a>
         <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
           <div>
-            <h1 class="text-[clamp(1.75rem,4vw,2.5rem)] font-bold leading-[0.95] mb-2">
+            <h1 class="text-[clamp(1.5rem,4vw,2.5rem)] font-bold leading-[0.95] mb-2">
               Video Aspect Ratios
             </h1>
-            <p class="text-[15px] text-[rgba(255,255,255,0.72)] leading-relaxed max-w-[560px]">
-              Every ratio used in broadcast, streaming, and cinema. Resolutions, standards, and platform specs.
+            <p class="text-[14px] sm:text-[15px] text-[rgba(255,255,255,0.72)] leading-relaxed max-w-[560px]">
+              Every ratio used in broadcast, streaming, and cinema. Click any resolution to send it to the calculator.
             </p>
           </div>
-          <a href="/" class="btn-primary self-start">Open Calculator</a>
+          <a href={`${base}/`} class="btn-primary self-start">Open Calculator</a>
         </div>
       </div>
     </section>
 
+    <!-- Intro hint -->
+    <section class="py-5 sm:py-6 bg-canvas dark:bg-surface-dark border-b border-hairline dark:border-[rgba(255,255,255,0.08)]">
+      <div class="container-site">
+        <p class="text-[13px] sm:text-[14px] text-mute dark:text-[rgba(255,255,255,0.6)]">
+          Click any <kbd class="inline-flex items-center px-2 py-0.5 border border-hairline-strong dark:border-[rgba(255,255,255,0.32)] text-[11px] font-bold font-mono text-ink dark:text-on-dark">Try</kbd> button or resolution chip to send those dimensions to the calculator instantly.
+        </p>
+      </div>
+    </section>
 
     <!-- Streaming specs -->
-    <section class="py-16 bg-surface-soft dark:bg-surface-deep">
+    <section class="py-10 sm:py-12 md:py-16 bg-surface-soft dark:bg-surface-deep">
       <div class="container-site">
         <h2 class="text-[clamp(1.25rem,2.5vw,1.75rem)] font-bold text-ink dark:text-on-dark mb-2">Streaming Platform Specs</h2>
-        <p class="text-[15px] text-mute dark:text-[rgba(255,255,255,0.5)] mb-8">Recommended export settings for direct upload.</p>
-        <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse">
+        <p class="text-[14px] sm:text-[15px] text-mute dark:text-[rgba(255,255,255,0.5)] mb-6 sm:mb-8">Recommended export settings for direct upload.</p>
+        <div class="overflow-x-auto -mx-4 sm:mx-0">
+          <table class="w-full min-w-[640px] text-left border-collapse px-4 sm:px-0">
             <thead>
               <tr class="border-b border-hairline dark:border-[rgba(255,255,255,0.1)]">
-                {['Platform', 'Ratio', 'Max Resolution', 'Codec', 'Max FPS'].map(h => (
-                  <th class="py-3 pr-6 text-[12px] font-bold uppercase tracking-wider text-charcoal dark:text-[rgba(255,255,255,0.5)]">{h}</th>
+                {['Platform', 'Ratio', 'Max Resolution', 'Codec', 'Max FPS', ''].map(h => (
+                  <th class="py-3 px-3 sm:px-4 first:pl-4 sm:first:pl-0 text-[11px] sm:text-[12px] font-bold uppercase tracking-wider text-charcoal dark:text-[rgba(255,255,255,0.5)] whitespace-nowrap">{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {streamingSpecs.map((s) => (
                 <tr class="border-b border-hairline dark:border-[rgba(255,255,255,0.06)] hover:bg-hairline dark:hover:bg-surface-dark transition-colors">
-                  <td class="py-3.5 pr-6 text-[14px] font-bold text-ink dark:text-on-dark">{s.platform}</td>
-                  <td class="py-3.5 pr-6">
+                  <td class="py-3.5 px-3 sm:px-4 first:pl-4 sm:first:pl-0 text-[14px] font-bold text-ink dark:text-on-dark whitespace-nowrap">{s.platform}</td>
+                  <td class="py-3.5 px-3 sm:px-4">
                     <span class="inline-flex items-center bg-primary text-on-primary text-[12px] font-bold px-2.5 py-0.5 rounded-[var(--radius-xs)]">{s.ratio}</span>
                   </td>
-                  <td class="py-3.5 pr-6 text-[14px] font-mono text-mute dark:text-[rgba(255,255,255,0.6)]">{s.max}</td>
-                  <td class="py-3.5 pr-6 text-[14px] text-mute dark:text-[rgba(255,255,255,0.6)]">{s.codec}</td>
-                  <td class="py-3.5 text-[14px] text-mute dark:text-[rgba(255,255,255,0.6)]">{s.fps}</td>
+                  <td class="py-3.5 px-3 sm:px-4 text-[13px] sm:text-[14px] font-mono text-mute dark:text-[rgba(255,255,255,0.6)] whitespace-nowrap">{s.max}</td>
+                  <td class="py-3.5 px-3 sm:px-4 text-[13px] sm:text-[14px] text-mute dark:text-[rgba(255,255,255,0.6)] whitespace-nowrap">{s.codec}</td>
+                  <td class="py-3.5 px-3 sm:px-4 text-[13px] sm:text-[14px] text-mute dark:text-[rgba(255,255,255,0.6)] whitespace-nowrap">{s.fps}</td>
+                  <td class="py-3.5 px-3 sm:px-4 text-right">
+                    <a
+                      href={tryHref(s.max)}
+                      class="inline-flex items-center gap-1 px-2.5 h-[28px] text-[11px] font-bold uppercase tracking-wider leading-none border rounded-[var(--radius-xs)] bg-canvas dark:bg-surface-elevated text-ink dark:text-on-dark border-hairline-strong dark:border-[rgba(255,255,255,0.24)] hover:bg-primary hover:text-on-primary hover:border-primary transition-colors no-underline"
+                      aria-label={`Try ${s.max} in calculator`}
+                    >
+                      Try
+                      <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5-5 5M6 12h12"/></svg>
+                    </a>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -139,24 +170,23 @@ const streamingSpecs = [
 
 
     <!-- Ratio cards -->
-    <section class="py-16 bg-canvas dark:bg-surface-dark">
+    <section class="py-10 sm:py-12 md:py-16 bg-canvas dark:bg-surface-dark">
       <div class="container-site">
-        <h2 class="text-[clamp(1.25rem,2.5vw,1.75rem)] font-bold text-ink dark:text-on-dark mb-10">Video & Cinema Ratios</h2>
+        <h2 class="text-[clamp(1.25rem,2.5vw,1.75rem)] font-bold text-ink dark:text-on-dark mb-6 sm:mb-10">Video and Cinema Ratios</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-0 border border-hairline dark:border-[rgba(255,255,255,0.1)]">
           {videoRatios.map((r, i) => (
             <article class={[
-              "p-6 border-b border-hairline dark:border-[rgba(255,255,255,0.08)]",
+              "p-5 sm:p-6 border-b border-hairline dark:border-[rgba(255,255,255,0.08)]",
               i % 2 === 0 ? "md:border-r" : "",
             ].join(' ')}>
               <div class="flex items-start justify-between gap-4 mb-3">
-                <div>
+                <div class="min-w-0">
                   <span class="inline-flex items-center bg-primary text-on-primary text-[13px] font-bold px-3 py-1 rounded-[var(--radius-xs)] mb-2">
                     {r.ratio}
                   </span>
-                  <h3 class="text-[16px] font-bold text-ink dark:text-on-dark">{r.name}</h3>
+                  <h3 class="text-[15px] sm:text-[16px] font-bold text-ink dark:text-on-dark">{r.name}</h3>
                   <p class="text-[12px] text-mute dark:text-[rgba(255,255,255,0.4)]">{r.decimal}</p>
                 </div>
-                <!-- Mini visual preview -->
                 <div class="shrink-0 flex items-center justify-center bg-surface-soft dark:bg-surface-deep rounded-[var(--radius-xs)] p-2" style="width:72px;height:56px;">
                   {(() => {
                     const [rw, rh] = r.ratio.includes(':') ? r.ratio.split(':').map(Number) : [parseFloat(r.decimal), 1];
@@ -171,10 +201,17 @@ const streamingSpecs = [
                 </div>
               </div>
               <p class="text-[13px] text-body dark:text-[rgba(255,255,255,0.72)] mb-2">{r.use}</p>
-              <p class="text-[12px] text-mute dark:text-[rgba(255,255,255,0.4)] italic">{r.note}</p>
-              <div class="mt-3 flex flex-wrap gap-1.5">
+              <p class="text-[12px] text-mute dark:text-[rgba(255,255,255,0.4)] italic mb-3">{r.note}</p>
+              <div class="flex flex-wrap gap-1.5">
                 {r.resolutions.map((res) => (
-                  <span class="text-[11px] font-mono bg-surface-soft dark:bg-surface-deep text-charcoal dark:text-[rgba(255,255,255,0.5)] px-2 py-0.5 rounded-[var(--radius-xs)]">{res}</span>
+                  <a
+                    href={tryHref(res)}
+                    class="inline-flex items-center gap-1 text-[11px] font-mono bg-surface-soft dark:bg-surface-deep text-charcoal dark:text-[rgba(255,255,255,0.6)] px-2 py-1 rounded-[var(--radius-xs)] border border-transparent hover:bg-primary hover:text-on-primary hover:border-primary no-underline transition-colors"
+                    aria-label={`Try ${res} in calculator`}
+                  >
+                    {res}
+                    <svg class="w-2.5 h-2.5 opacity-60" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5-5 5M6 12h12"/></svg>
+                  </a>
                 ))}
               </div>
             </article>
@@ -185,13 +222,13 @@ const streamingSpecs = [
 
 
     <!-- CTA -->
-    <section class="py-16 bg-surface-dark">
-      <div class="container-site flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+    <section class="py-10 sm:py-12 md:py-16 bg-surface-dark">
+      <div class="container-site flex flex-col md:flex-row items-start md:items-center justify-between gap-5 md:gap-6">
         <div>
-          <h2 class="text-[1.5rem] font-bold text-on-dark mb-2">Calculate your video dimensions</h2>
-          <p class="text-[15px] text-[rgba(255,255,255,0.6)]">Find any missing dimension for your timeline in seconds.</p>
+          <h2 class="text-[1.25rem] sm:text-[1.5rem] font-bold text-on-dark mb-2">Calculate your video dimensions</h2>
+          <p class="text-[14px] sm:text-[15px] text-[rgba(255,255,255,0.6)]">Find any missing dimension for your timeline in seconds.</p>
         </div>
-        <a href="/" class="btn-primary shrink-0">Open Calculator</a>
+        <a href={`${base}/`} class="btn-primary shrink-0">Open Calculator</a>
       </div>
     </section>
   </main>

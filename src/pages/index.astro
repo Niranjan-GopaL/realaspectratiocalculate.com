@@ -57,6 +57,7 @@ const jsonLdFaq = {
 };
 
 const siteUrl = new URL(Astro.url.pathname, Astro.site).href.replace(/\/$/, '');
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const jsonLdWebApp = {
   '@context': 'https://schema.org',
   '@type': 'WebApplication',
@@ -80,15 +81,15 @@ const jsonLdWebApp = {
 
   <main>
     <!-- Compact hero : professionals get to the calculator fast -->
-    <section class="bg-surface-dark text-on-dark py-8 md:py-10 border-b border-[rgba(255,255,255,0.08)]">
+    <section class="bg-surface-dark text-on-dark py-4 sm:py-6 md:py-10 border-b border-[rgba(255,255,255,0.08)]">
       <div class="container-site">
-        <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+        <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-2 md:gap-4">
           <div>
-            <h1 class="text-[clamp(1.5rem,3.5vw,2.25rem)] font-bold leading-[0.95] mb-1.5">
+            <h1 class="text-[clamp(1.25rem,4vw,2.25rem)] font-bold leading-[0.95] mb-1 sm:mb-1.5">
               Aspect Ratio Calculator
             </h1>
-            <p class="text-[14px] text-[rgba(255,255,255,0.72)] max-w-[560px]">
-              Four modes : find missing dimensions, identify ratios, resize, or scale by percent. Live preview, no sign-up.
+            <p class="text-[12px] sm:text-[14px] text-[rgba(255,255,255,0.72)] max-w-[560px]">
+              Four modes: find missing dimensions, identify ratios, resize, or scale by percent.
             </p>
           </div>
           <div class="flex items-center gap-2">
@@ -101,32 +102,32 @@ const jsonLdWebApp = {
     </section>
 
     <!-- Calculator : above the fold -->
-    <section class="py-8 md:py-10 bg-canvas dark:bg-surface-dark">
+    <section class="py-3 sm:py-6 md:py-10 bg-canvas dark:bg-surface-dark">
       <div class="container-site">
         <Calculator />
       </div>
     </section>
 
     <!-- Platform-targeted links : keep professionals in flow -->
-    <section class="py-12 bg-surface-dark text-on-dark border-y border-[rgba(255,255,255,0.08)]">
+    <section class="py-10 sm:py-12 bg-surface-dark text-on-dark border-y border-[rgba(255,255,255,0.08)]">
       <div class="container-site">
-        <h2 class="text-[18px] font-bold leading-tight mb-6">Explore by Platform</h2>
+        <h2 class="text-[18px] font-bold leading-tight mb-5 sm:mb-6">Explore by Platform</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-0 border border-[rgba(255,255,255,0.12)]">
           {[
             {
-              href: '/social-media-aspect-ratios/',
+              href: `${base}/social-media-aspect-ratios/`,
               title: 'Social Media',
               desc: 'Every ratio for Instagram, TikTok, YouTube, X, LinkedIn, Pinterest, and Facebook.',
               badge: '9:16 · 1:1 · 4:5',
             },
             {
-              href: '/video-aspect-ratios/',
+              href: `${base}/video-aspect-ratios/`,
               title: 'Video and Film',
               desc: '16:9, 21:9, 2.39:1, every standard used in broadcast, streaming, and cinema.',
               badge: '16:9 · 21:9 · 2.39:1',
             },
             {
-              href: '/how-to-calculate-aspect-ratio/',
+              href: `${base}/how-to-calculate-aspect-ratio/`,
               title: 'How to Calculate',
               desc: 'Step-by-step guide with formulas, worked examples, and common pitfalls.',
               badge: 'GCD Method',
@@ -134,7 +135,7 @@ const jsonLdWebApp = {
           ].map((card) => (
             <a
               href={card.href}
-              class="group block p-6 border-b md:border-b-0 md:border-r border-[rgba(255,255,255,0.12)] last:border-0 hover:bg-surface-deep transition-colors no-underline"
+              class="group block p-5 sm:p-6 border-b md:border-b-0 md:border-r border-[rgba(255,255,255,0.12)] last:border-0 hover:bg-surface-deep transition-colors no-underline"
             >
               <div class="inline-flex items-center bg-primary text-on-primary text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-[var(--radius-xs)] mb-3">
                 {card.badge}
@@ -148,17 +149,17 @@ const jsonLdWebApp = {
     </section>
 
     <!-- Common Aspect Ratios table -->
-    <section id="ratios" class="py-12 bg-canvas dark:bg-surface-dark">
+    <section id="ratios" class="py-10 sm:py-12 bg-canvas dark:bg-surface-dark">
       <div class="container-site">
-        <div class="flex items-end justify-between gap-4 mb-6">
+        <div class="flex items-end justify-between gap-4 mb-5 sm:mb-6">
           <div>
             <h2 class="text-[20px] font-bold leading-tight text-ink dark:text-on-dark mb-1">Common Aspect Ratios</h2>
             <p class="text-[13px] text-mute dark:text-[rgba(255,255,255,0.5)]">Every standard ratio used across video, photography, social media, and print.</p>
           </div>
         </div>
 
-        <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse">
+        <div class="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
+          <table class="w-full min-w-[520px] text-left border-collapse">
             <thead>
               <tr class="border-b border-hairline dark:border-[rgba(255,255,255,0.12)]">
                 <th class="py-2.5 pr-6 text-[11px] font-bold uppercase tracking-wider text-charcoal dark:text-[rgba(255,255,255,0.5)]">Ratio</th>
@@ -185,7 +186,7 @@ const jsonLdWebApp = {
     </section>
 
     <!-- FAQ -->
-    <section id="faq" class="py-12 bg-surface-soft dark:bg-surface-deep border-t border-hairline dark:border-[rgba(255,255,255,0.08)]">
+    <section id="faq" class="py-10 sm:py-12 bg-surface-soft dark:bg-surface-deep border-t border-hairline dark:border-[rgba(255,255,255,0.08)]">
       <div class="container-site">
         <div class="max-w-[800px]">
           <h2 class="text-[20px] font-bold leading-tight text-ink dark:text-on-dark mb-6">
@@ -209,9 +210,9 @@ const jsonLdWebApp = {
     </section>
 
     <!-- Educational : what is aspect ratio. Kept brief, at the bottom for SEO without slowing professionals down. -->
-    <section class="py-12 bg-canvas dark:bg-surface-dark border-t border-hairline dark:border-[rgba(255,255,255,0.08)]">
+    <section class="py-10 sm:py-12 bg-canvas dark:bg-surface-dark border-t border-hairline dark:border-[rgba(255,255,255,0.08)]">
       <div class="container-site">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 items-start">
           <div class="max-w-[600px]">
             <h2 class="text-[20px] font-bold leading-tight text-ink dark:text-on-dark mb-3">
               What is aspect ratio?
@@ -223,7 +224,7 @@ const jsonLdWebApp = {
             <p class="text-[14px] text-body dark:text-[rgba(255,255,255,0.72)] leading-relaxed mb-4">
               Getting the ratio right prevents stretching, unwanted cropping, letterboxing, or pillarboxing. It is critical for video production, web design, photography, and print layout.
             </p>
-            <a href="/how-to-calculate-aspect-ratio/" class="link-brand dark:text-on-dark">
+            <a href={`${base}/how-to-calculate-aspect-ratio/`} class="link-brand dark:text-on-dark">
               Read the full guide
             </a>
           </div>

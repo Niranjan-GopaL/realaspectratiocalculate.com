@@ -8,6 +8,15 @@
   4. scale           : given original W and H + scale %, find new dimensions
 */
 
+const favorites = [
+  { ratio: '16:9',  name: 'Video',     w: 16, h: 9 },
+  { ratio: '9:16',  name: 'Vertical',  w: 9,  h: 16 },
+  { ratio: '1:1',   name: 'Square',    w: 1,  h: 1 },
+  { ratio: '4:5',   name: 'Portrait',  w: 4,  h: 5 },
+  { ratio: '21:9',  name: 'Ultrawide', w: 21, h: 9 },
+  { ratio: '3:2',   name: 'DSLR',      w: 3,  h: 2 },
+];
+
 const presetGroups = [
   {
     label: 'Common',
@@ -87,42 +96,42 @@ const presetGroups = [
 ---
 
 <section class="bg-canvas dark:bg-surface-deep border border-hairline dark:border-[rgba(255,255,255,0.16)]">
-  <!-- Header row : tabs + unit selector -->
-  <div class="flex flex-wrap items-center justify-between gap-2 border-b border-hairline dark:border-[rgba(255,255,255,0.12)]">
-    <div class="flex overflow-x-auto" role="tablist" aria-label="Calculator modes">
+  <!-- Header row : tabs + unit selector, single row at all sizes -->
+  <div class="flex items-stretch border-b border-hairline dark:border-[rgba(255,255,255,0.12)]">
+    <div class="flex overflow-x-auto no-scrollbar flex-1 min-w-0" role="tablist" aria-label="Calculator modes">
       {[
-        { id: 'find-dimension', label: 'Find Dimension' },
-        { id: 'find-ratio',     label: 'Find Ratio' },
-        { id: 'resize',         label: 'Resize' },
-        { id: 'scale',          label: 'Scale %' },
+        { id: 'find-dimension', label: 'Find Dimension', short: 'Dim' },
+        { id: 'find-ratio',     label: 'Find Ratio',     short: 'Ratio' },
+        { id: 'resize',         label: 'Resize',         short: 'Resize' },
+        { id: 'scale',          label: 'Scale %',        short: '%' },
       ].map((tab, i) => (
         <button
           role="tab"
-          data-tab={tab.id}
           aria-selected={i === 0 ? 'true' : 'false'}
           aria-controls={`panel-${tab.id}`}
           id={`tab-${tab.id}`}
           class={[
-            "shrink-0 px-5 py-4 text-[13px] font-bold leading-none transition-colors border-b-2 -mb-px",
+            "shrink-0 px-2.5 sm:px-5 py-2.5 sm:py-4 text-[12px] sm:text-[13px] font-bold leading-none transition-colors border-b-2 -mb-px whitespace-nowrap",
             i === 0
               ? "border-primary text-ink dark:text-on-dark bg-surface-soft dark:bg-surface-dark"
               : "border-transparent text-mute dark:text-[rgba(255,255,255,0.5)] hover:text-ink dark:hover:text-on-dark",
           ].join(' ')}
         >
-          {tab.label}
+          <span class="hidden sm:inline">{tab.label}</span>
+          <span class="sm:hidden">{tab.short}</span>
         </button>
       ))}
     </div>
 
-    <!-- Unit selector -->
-    <div class="flex items-center gap-2 px-4 py-2">
-      <span class="text-[10px] font-bold uppercase tracking-wider text-mute dark:text-[rgba(255,255,255,0.4)]">Unit</span>
+    <!-- Unit selector : right side, label hidden on smallest screens -->
+    <div class="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 shrink-0 border-l border-hairline dark:border-[rgba(255,255,255,0.08)]">
+      <span class="hidden sm:inline text-[10px] font-bold uppercase tracking-wider text-mute dark:text-[rgba(255,255,255,0.4)]">Unit</span>
       <div class="flex border border-hairline-strong dark:border-[rgba(255,255,255,0.24)] rounded-[var(--radius-xs)] overflow-hidden">
         {['px', 'cm', 'mm', 'in'].map((unit, i) => (
           <button
             data-unit-btn={unit}
             class={[
-              "px-2.5 py-1 text-[12px] font-bold leading-none transition-colors",
+              "px-1.5 sm:px-2.5 py-1 text-[11px] sm:text-[12px] font-bold leading-none transition-colors",
               i === 0
                 ? "bg-ink text-on-dark dark:bg-on-dark dark:text-ink"
                 : "bg-transparent text-mute dark:text-[rgba(255,255,255,0.5)] hover:text-ink dark:hover:text-on-dark",
@@ -135,37 +144,38 @@ const presetGroups = [
     </div>
   </div>
 
-  <div class="p-6 md:p-8">
-    <div class="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8 items-start">
+  <div class="p-3 sm:p-6 md:p-8">
+    <!-- Top : inputs + result, side by side on desktop, stacked on mobile -->
+    <div class="grid grid-cols-1 lg:grid-cols-[1fr_340px] xl:grid-cols-[1fr_360px] gap-4 sm:gap-6 lg:gap-8 items-start">
 
       <!-- LEFT : forms + presets -->
       <div>
 
         <!-- Panel 1 : Find Dimension -->
         <div id="panel-find-dimension" role="tabpanel" aria-labelledby="tab-find-dimension">
-          <p class="text-[13px] text-mute dark:text-[rgba(255,255,255,0.6)] mb-5">
+          <p class="hidden sm:block text-[13px] text-mute dark:text-[rgba(255,255,255,0.6)] mb-5">
             Enter a known aspect ratio and one dimension to find the other.
           </p>
-          <div class="space-y-4">
-            <div class="grid grid-cols-[1fr_24px_1fr] items-end gap-3">
+          <div class="space-y-3 sm:space-y-4">
+            <div class="grid grid-cols-[1fr_18px_1fr] sm:grid-cols-[1fr_24px_1fr] items-end gap-2 sm:gap-3">
               <div>
-                <label class="block text-[11px] font-bold uppercase tracking-wider text-charcoal dark:text-[rgba(255,255,255,0.5)] mb-1.5" for="fd-ratio-w">Ratio Width</label>
+                <label class="block text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-charcoal dark:text-[rgba(255,255,255,0.5)] mb-1 sm:mb-1.5" for="fd-ratio-w">Ratio Width</label>
                 <input id="fd-ratio-w" type="number" min="0.01" step="any" value="16" class="field-input dark:field-input-dark" data-mode="find-dimension" data-role="ratio" />
               </div>
               <span class="pb-3 text-center font-bold text-mute dark:text-[rgba(255,255,255,0.4)]">:</span>
               <div>
-                <label class="block text-[11px] font-bold uppercase tracking-wider text-charcoal dark:text-[rgba(255,255,255,0.5)] mb-1.5" for="fd-ratio-h">Ratio Height</label>
+                <label class="block text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-charcoal dark:text-[rgba(255,255,255,0.5)] mb-1 sm:mb-1.5" for="fd-ratio-h">Ratio Height</label>
                 <input id="fd-ratio-h" type="number" min="0.01" step="any" value="9" class="field-input dark:field-input-dark" data-mode="find-dimension" data-role="ratio" />
               </div>
             </div>
-            <div class="grid grid-cols-[1fr_24px_1fr] items-end gap-3">
+            <div class="grid grid-cols-[1fr_18px_1fr] sm:grid-cols-[1fr_24px_1fr] items-end gap-2 sm:gap-3">
               <div>
-                <label class="block text-[11px] font-bold uppercase tracking-wider text-charcoal dark:text-[rgba(255,255,255,0.5)] mb-1.5" for="fd-width">Width <span class="unit-label">(px)</span></label>
+                <label class="block text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-charcoal dark:text-[rgba(255,255,255,0.5)] mb-1 sm:mb-1.5" for="fd-width">Width <span class="unit-label">(px)</span></label>
                 <input id="fd-width" type="number" min="1" step="1" value="1920" class="field-input dark:field-input-dark" data-mode="find-dimension" data-side="a" />
               </div>
               <span class="pb-3 text-center font-bold text-mute dark:text-[rgba(255,255,255,0.4)]">×</span>
               <div>
-                <label class="block text-[11px] font-bold uppercase tracking-wider text-charcoal dark:text-[rgba(255,255,255,0.5)] mb-1.5" for="fd-height">Height <span class="unit-label">(px)</span></label>
+                <label class="block text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-charcoal dark:text-[rgba(255,255,255,0.5)] mb-1 sm:mb-1.5" for="fd-height">Height <span class="unit-label">(px)</span></label>
                 <input id="fd-height" type="number" min="1" step="1" class="field-input dark:field-input-dark" data-mode="find-dimension" data-side="b" />
               </div>
             </div>
@@ -174,17 +184,17 @@ const presetGroups = [
 
         <!-- Panel 2 : Find Ratio -->
         <div id="panel-find-ratio" role="tabpanel" aria-labelledby="tab-find-ratio" class="hidden">
-          <p class="text-[13px] text-mute dark:text-[rgba(255,255,255,0.6)] mb-5">
+          <p class="hidden sm:block text-[13px] text-mute dark:text-[rgba(255,255,255,0.6)] mb-5">
             Enter any width and height to get the simplified aspect ratio.
           </p>
-          <div class="grid grid-cols-[1fr_24px_1fr] items-end gap-3">
+          <div class="grid grid-cols-[1fr_18px_1fr] sm:grid-cols-[1fr_24px_1fr] items-end gap-2 sm:gap-3">
             <div>
-              <label class="block text-[11px] font-bold uppercase tracking-wider text-charcoal dark:text-[rgba(255,255,255,0.5)] mb-1.5" for="fr-width">Width <span class="unit-label">(px)</span></label>
+              <label class="block text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-charcoal dark:text-[rgba(255,255,255,0.5)] mb-1 sm:mb-1.5" for="fr-width">Width <span class="unit-label">(px)</span></label>
               <input id="fr-width" type="number" min="1" step="1" value="1920" class="field-input dark:field-input-dark" data-mode="find-ratio" data-role="dim" />
             </div>
             <span class="pb-3 text-center font-bold text-mute dark:text-[rgba(255,255,255,0.4)]">×</span>
             <div>
-              <label class="block text-[11px] font-bold uppercase tracking-wider text-charcoal dark:text-[rgba(255,255,255,0.5)] mb-1.5" for="fr-height">Height <span class="unit-label">(px)</span></label>
+              <label class="block text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-charcoal dark:text-[rgba(255,255,255,0.5)] mb-1 sm:mb-1.5" for="fr-height">Height <span class="unit-label">(px)</span></label>
               <input id="fr-height" type="number" min="1" step="1" value="1080" class="field-input dark:field-input-dark" data-mode="find-ratio" data-role="dim" />
             </div>
           </div>
@@ -192,29 +202,29 @@ const presetGroups = [
 
         <!-- Panel 3 : Resize -->
         <div id="panel-resize" role="tabpanel" aria-labelledby="tab-resize" class="hidden">
-          <p class="text-[13px] text-mute dark:text-[rgba(255,255,255,0.6)] mb-5">
+          <p class="hidden sm:block text-[13px] text-mute dark:text-[rgba(255,255,255,0.6)] mb-5">
             Keep proportions exactly. Enter your original dimensions and one new dimension.
           </p>
-          <div class="space-y-4">
-            <div class="grid grid-cols-[1fr_24px_1fr] items-end gap-3">
+          <div class="space-y-3 sm:space-y-4">
+            <div class="grid grid-cols-[1fr_18px_1fr] sm:grid-cols-[1fr_24px_1fr] items-end gap-2 sm:gap-3">
               <div>
-                <label class="block text-[11px] font-bold uppercase tracking-wider text-charcoal dark:text-[rgba(255,255,255,0.5)] mb-1.5" for="rs-orig-w">Original Width <span class="unit-label">(px)</span></label>
+                <label class="block text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-charcoal dark:text-[rgba(255,255,255,0.5)] mb-1 sm:mb-1.5" for="rs-orig-w">Original Width <span class="unit-label">(px)</span></label>
                 <input id="rs-orig-w" type="number" min="1" step="1" value="1920" class="field-input dark:field-input-dark" data-mode="resize" data-role="orig" />
               </div>
               <span class="pb-3 text-center font-bold text-mute dark:text-[rgba(255,255,255,0.4)]">×</span>
               <div>
-                <label class="block text-[11px] font-bold uppercase tracking-wider text-charcoal dark:text-[rgba(255,255,255,0.5)] mb-1.5" for="rs-orig-h">Original Height <span class="unit-label">(px)</span></label>
+                <label class="block text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-charcoal dark:text-[rgba(255,255,255,0.5)] mb-1 sm:mb-1.5" for="rs-orig-h">Original Height <span class="unit-label">(px)</span></label>
                 <input id="rs-orig-h" type="number" min="1" step="1" value="1080" class="field-input dark:field-input-dark" data-mode="resize" data-role="orig" />
               </div>
             </div>
-            <div class="grid grid-cols-[1fr_24px_1fr] items-end gap-3">
+            <div class="grid grid-cols-[1fr_18px_1fr] sm:grid-cols-[1fr_24px_1fr] items-end gap-2 sm:gap-3">
               <div>
-                <label class="block text-[11px] font-bold uppercase tracking-wider text-charcoal dark:text-[rgba(255,255,255,0.5)] mb-1.5" for="rs-new-w">New Width <span class="unit-label">(px)</span></label>
+                <label class="block text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-charcoal dark:text-[rgba(255,255,255,0.5)] mb-1 sm:mb-1.5" for="rs-new-w">New Width <span class="unit-label">(px)</span></label>
                 <input id="rs-new-w" type="number" min="1" step="1" value="1280" class="field-input dark:field-input-dark" data-mode="resize" data-side="a" />
               </div>
               <span class="pb-3 text-center font-bold text-mute dark:text-[rgba(255,255,255,0.4)]">×</span>
               <div>
-                <label class="block text-[11px] font-bold uppercase tracking-wider text-charcoal dark:text-[rgba(255,255,255,0.5)] mb-1.5" for="rs-new-h">New Height <span class="unit-label">(px)</span></label>
+                <label class="block text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-charcoal dark:text-[rgba(255,255,255,0.5)] mb-1 sm:mb-1.5" for="rs-new-h">New Height <span class="unit-label">(px)</span></label>
                 <input id="rs-new-h" type="number" min="1" step="1" class="field-input dark:field-input-dark" data-mode="resize" data-side="b" />
               </div>
             </div>
@@ -223,78 +233,60 @@ const presetGroups = [
 
         <!-- Panel 4 : Scale -->
         <div id="panel-scale" role="tabpanel" aria-labelledby="tab-scale" class="hidden">
-          <p class="text-[13px] text-mute dark:text-[rgba(255,255,255,0.6)] mb-5">
+          <p class="hidden sm:block text-[13px] text-mute dark:text-[rgba(255,255,255,0.6)] mb-5">
             Scale dimensions by a percentage. The ratio stays locked.
           </p>
-          <div class="space-y-4">
-            <div class="grid grid-cols-[1fr_24px_1fr] items-end gap-3">
+          <div class="space-y-3 sm:space-y-4">
+            <div class="grid grid-cols-[1fr_18px_1fr] sm:grid-cols-[1fr_24px_1fr] items-end gap-2 sm:gap-3">
               <div>
-                <label class="block text-[11px] font-bold uppercase tracking-wider text-charcoal dark:text-[rgba(255,255,255,0.5)] mb-1.5" for="sc-width">Width <span class="unit-label">(px)</span></label>
+                <label class="block text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-charcoal dark:text-[rgba(255,255,255,0.5)] mb-1 sm:mb-1.5" for="sc-width">Width <span class="unit-label">(px)</span></label>
                 <input id="sc-width" type="number" min="1" step="1" value="1920" class="field-input dark:field-input-dark" data-mode="scale" data-role="dim" />
               </div>
               <span class="pb-3 text-center font-bold text-mute dark:text-[rgba(255,255,255,0.4)]">×</span>
               <div>
-                <label class="block text-[11px] font-bold uppercase tracking-wider text-charcoal dark:text-[rgba(255,255,255,0.5)] mb-1.5" for="sc-height">Height <span class="unit-label">(px)</span></label>
+                <label class="block text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-charcoal dark:text-[rgba(255,255,255,0.5)] mb-1 sm:mb-1.5" for="sc-height">Height <span class="unit-label">(px)</span></label>
                 <input id="sc-height" type="number" min="1" step="1" value="1080" class="field-input dark:field-input-dark" data-mode="scale" data-role="dim" />
               </div>
             </div>
             <div>
-              <label class="block text-[11px] font-bold uppercase tracking-wider text-charcoal dark:text-[rgba(255,255,255,0.5)] mb-1.5" for="sc-pct">Scale (%)</label>
+              <label class="block text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-charcoal dark:text-[rgba(255,255,255,0.5)] mb-1 sm:mb-1.5" for="sc-pct">Scale (%)</label>
               <input id="sc-pct" type="number" min="1" max="10000" step="1" value="50" class="field-input dark:field-input-dark" data-mode="scale" data-role="dim" />
             </div>
           </div>
         </div>
 
-        <!-- Preset groups : organised by platform -->
-        <div id="presets" class="mt-8 pt-6 border-t border-hairline dark:border-[rgba(255,255,255,0.08)]">
-          <div class="space-y-3">
-            {presetGroups.map((group) => (
-              <div class="flex flex-col md:flex-row md:items-start gap-1.5 md:gap-4">
-                <div class="md:w-[140px] shrink-0 pt-2">
-                  <span class="text-[10px] font-bold uppercase tracking-wider text-charcoal dark:text-[rgba(255,255,255,0.45)]">
-                    {group.label}
-                  </span>
-                </div>
-                <div class="flex flex-wrap gap-1.5">
-                  {group.items.map((p) => (
-                    <button
-                      class="px-3 h-[30px] text-[12px] font-bold leading-none border rounded-[var(--radius-xs)] bg-canvas dark:bg-surface-dark text-ink dark:text-on-dark border-hairline-strong dark:border-[rgba(255,255,255,0.24)] hover:bg-primary hover:text-on-primary hover:border-primary dark:hover:bg-primary dark:hover:text-on-primary dark:hover:border-primary transition-colors"
-                      data-preset-w={p.w}
-                      data-preset-h={p.h}
-                      aria-label={`Set ratio to ${p.ratio}${'name' in p && p.name ? ` ${p.name}` : ''}`}
-                    >
-                      <span>{p.ratio}</span>
-                      {'name' in p && p.name && (
-                        <span class="ml-1.5 opacity-60 font-normal">{p.name}</span>
-                      )}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
       </div>
 
-      <!-- RIGHT : result + preview -->
-      <div class="flex flex-col gap-5">
-        <!-- Result : prominent, with named ratio pill -->
+      <!-- RIGHT : result with inline mini-preview thumbnail -->
+      <div class="flex flex-col gap-4">
         <div id="result-box" class="bg-surface-dark dark:bg-surface-deep relative">
-          <!-- Yellow accent strip (visible in both modes) -->
           <div class="h-1 bg-primary"></div>
 
-          <div class="p-6">
-            <div class="flex items-center justify-between gap-3 mb-4">
-              <p class="text-[10px] font-bold uppercase tracking-wider text-[rgba(255,255,255,0.5)]">Result</p>
-              <span id="result-named" class="hidden text-[11px] font-bold uppercase tracking-wider bg-primary text-on-primary px-2.5 py-1 rounded-[var(--radius-xs)]">
-                <!-- e.g. 16:9 HD Widescreen -->
-              </span>
+          <div class="p-4 sm:p-6">
+            <div class="flex items-start justify-between gap-3 mb-3 sm:mb-4">
+              <div class="flex flex-col gap-1.5 min-w-0">
+                <p class="text-[10px] font-bold uppercase tracking-wider text-[rgba(255,255,255,0.5)]">Result</p>
+                <span id="result-named" class="hidden self-start text-[10px] sm:text-[11px] font-bold uppercase tracking-wider bg-primary text-on-primary px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-[var(--radius-xs)]">
+                  <!-- e.g. 16:9 HD Widescreen -->
+                </span>
+              </div>
+              <!-- Inline mini-preview thumbnail -->
+              <div class="shrink-0 flex items-center justify-center bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.12)] rounded-[var(--radius-xs)]" style="width:80px;height:54px;">
+                <div
+                  id="ratio-preview"
+                  class="bg-on-dark flex items-center justify-center font-bold text-[10px] transition-all duration-200 max-w-full"
+                  style="width:64px;height:36px;"
+                  aria-label="Aspect ratio visual preview"
+                >
+                  <span id="preview-label" class="text-ink">16:9</span>
+                </div>
+              </div>
             </div>
-            <div id="result-main" class="text-[36px] font-bold leading-[0.95] text-on-dark tracking-tight">—</div>
-            <div id="result-sub" class="text-[13px] text-[rgba(255,255,255,0.6)] mt-2 font-mono"></div>
+            <div id="result-main" class="text-[clamp(1.5rem,5vw,2.25rem)] font-bold leading-[0.95] text-on-dark tracking-tight break-words">—</div>
+            <div id="result-sub" class="text-[12px] sm:text-[13px] text-[rgba(255,255,255,0.6)] mt-1.5 sm:mt-2 font-mono break-words"></div>
             <button
               id="copy-btn"
-              class="hidden mt-4 inline-flex items-center gap-1.5 px-3 h-[30px] text-[12px] font-bold leading-none border rounded-[var(--radius-xs)] bg-transparent text-on-dark border-[rgba(255,255,255,0.24)] hover:bg-primary hover:text-on-primary hover:border-primary transition-colors"
+              class="hidden mt-3 sm:mt-4 inline-flex items-center gap-1.5 px-3 h-[28px] sm:h-[30px] text-[11px] sm:text-[12px] font-bold leading-none border rounded-[var(--radius-xs)] bg-transparent text-on-dark border-[rgba(255,255,255,0.24)] hover:bg-primary hover:text-on-primary hover:border-primary transition-colors"
               aria-label="Copy result"
             >
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
@@ -302,23 +294,63 @@ const presetGroups = [
             </button>
           </div>
         </div>
-
-        <!-- Visual preview -->
-        <div>
-          <p class="text-[10px] font-bold uppercase tracking-wider text-charcoal dark:text-[rgba(255,255,255,0.45)] mb-3">Preview</p>
-          <div class="bg-surface-soft dark:bg-surface-dark border border-hairline dark:border-[rgba(255,255,255,0.12)] flex items-center justify-center p-5" style="height:180px;">
-            <div
-              id="ratio-preview"
-              class="bg-ink dark:bg-on-dark flex items-center justify-center font-bold text-[13px] transition-all duration-300"
-              style="width:160px; height:90px;"
-              aria-label="Aspect ratio visual preview"
-            >
-              <span id="preview-label" class="text-on-dark dark:text-ink">16:9</span>
-            </div>
-          </div>
-        </div>
       </div>
 
+    </div>
+
+    <!-- Presets : favorites strip always visible + collapsible full list -->
+    <div id="presets" class="mt-4 sm:mt-6 pt-4 sm:pt-5 border-t border-hairline dark:border-[rgba(255,255,255,0.08)]">
+      <div class="flex items-center justify-between gap-3 mb-2.5 sm:mb-3">
+        <p class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-charcoal dark:text-[rgba(255,255,255,0.5)]">Favorites</p>
+      </div>
+      <div class="flex flex-wrap gap-1.5">
+        {favorites.map((p) => (
+          <button
+            class="px-2.5 sm:px-3 h-[28px] sm:h-[30px] text-[11px] sm:text-[12px] font-bold leading-none border rounded-[var(--radius-xs)] bg-canvas dark:bg-surface-dark text-ink dark:text-on-dark border-hairline-strong dark:border-[rgba(255,255,255,0.24)] hover:bg-primary hover:text-on-primary hover:border-primary dark:hover:bg-primary dark:hover:text-on-primary dark:hover:border-primary transition-colors"
+            data-preset-w={p.w}
+            data-preset-h={p.h}
+            aria-label={`Set ratio to ${p.ratio} ${p.name}`}
+          >
+            <span>{p.ratio}</span>
+            <span class="ml-1 sm:ml-1.5 opacity-60 font-normal">{p.name}</span>
+          </button>
+        ))}
+      </div>
+
+      <details class="group mt-3 sm:mt-4">
+        <summary class="list-none flex items-center justify-between cursor-pointer select-none px-3 h-[36px] border rounded-[var(--radius-xs)] bg-surface-soft dark:bg-surface-dark border-hairline dark:border-[rgba(255,255,255,0.16)] hover:border-hairline-strong dark:hover:border-[rgba(255,255,255,0.32)] transition-colors">
+          <span class="text-[11px] sm:text-[12px] font-bold uppercase tracking-wider text-ink dark:text-on-dark">More Presets (50+ formats)</span>
+          <svg class="w-4 h-4 text-mute dark:text-[rgba(255,255,255,0.5)] transition-transform group-open:rotate-180" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+          </svg>
+        </summary>
+        <div class="space-y-3 pt-4">
+          {presetGroups.map((group) => (
+            <div class="flex flex-col sm:flex-row sm:items-start gap-1.5 sm:gap-4">
+              <div class="sm:w-[150px] shrink-0 sm:pt-2">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-charcoal dark:text-[rgba(255,255,255,0.45)]">
+                  {group.label}
+                </span>
+              </div>
+              <div class="flex flex-wrap gap-1.5">
+                {group.items.map((p) => (
+                  <button
+                    class="px-2.5 sm:px-3 h-[28px] sm:h-[30px] text-[11px] sm:text-[12px] font-bold leading-none border rounded-[var(--radius-xs)] bg-canvas dark:bg-surface-dark text-ink dark:text-on-dark border-hairline-strong dark:border-[rgba(255,255,255,0.24)] hover:bg-primary hover:text-on-primary hover:border-primary dark:hover:bg-primary dark:hover:text-on-primary dark:hover:border-primary transition-colors"
+                    data-preset-w={p.w}
+                    data-preset-h={p.h}
+                    aria-label={`Set ratio to ${p.ratio}${'name' in p && p.name ? ` ${p.name}` : ''}`}
+                  >
+                    <span>{p.ratio}</span>
+                    {'name' in p && p.name && (
+                      <span class="ml-1 sm:ml-1.5 opacity-60 font-normal">{p.name}</span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </details>
     </div>
   </div>
 </section>
@@ -406,8 +438,8 @@ function getNum(id: string): number {
 
 // ─── Preview ───────────────────────────────────────────────────────────────
 
-const MAX_W = 260;
-const MAX_H = 150;
+const MAX_W = 64;
+const MAX_H = 36;
 
 function updatePreview(w: number, h: number) {
   const preview = document.getElementById('ratio-preview') as HTMLElement;
@@ -427,8 +459,8 @@ function updatePreview(w: number, h: number) {
     pw = MAX_H * ratio;
     if (pw > MAX_W) { pw = MAX_W; ph = MAX_W / ratio; }
   }
-  pw = Math.max(Math.round(pw), 20);
-  ph = Math.max(Math.round(ph), 20);
+  pw = Math.max(Math.round(pw), 12);
+  ph = Math.max(Math.round(ph), 12);
 
   preview.style.width = `${pw}px`;
   preview.style.height = `${ph}px`;

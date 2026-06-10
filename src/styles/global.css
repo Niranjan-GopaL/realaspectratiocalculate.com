@@ -12,8 +12,6 @@
   --color-body: #222222;
   --color-charcoal: #333333;
   --color-mute: #666666;
-  --color-ash: #8a8a8a;
-  --color-stone: #c4c4c4;
   --color-on-dark: #ffffff;
   --color-canvas: #ffffff;
   --color-surface-soft: #f7f7f7;
@@ -24,9 +22,6 @@
   --color-hairline-strong: #000000;
 
   --radius-xs: 2px;
-  --radius-sm: 3px;
-  --radius-md: 4px;
-  --radius-pill: 46px;
   --radius-full: 9999px;
 }
 
@@ -78,10 +73,6 @@
   transition: background-color 0.15s;
 }
 
-@utility btn-primary-pressed {
-  background-color: var(--color-primary-deep);
-}
-
 @utility btn-dark {
   display: inline-flex;
   align-items: center;
@@ -120,26 +111,6 @@
   transition: background-color 0.15s;
 }
 
-@utility btn-pill {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--color-canvas);
-  color: var(--color-ink);
-  font-weight: 600;
-  font-size: 13px;
-  letter-spacing: 0.13px;
-  line-height: 1.2;
-  padding: 8px 16px;
-  border-radius: var(--radius-pill);
-  border: 1px solid var(--color-hairline-strong);
-  cursor: pointer;
-  text-decoration: none;
-  transition: background-color 0.15s, color 0.15s;
-  height: 36px;
-  white-space: nowrap;
-}
-
 @utility field-input {
   width: 100%;
   background-color: var(--color-canvas);
@@ -174,16 +145,27 @@
   transition: background-color 0.15s, color 0.15s;
 }
 
-/* Sectional yellow divider strip : signals the Renault accent without text contrast issues */
-@utility accent-strip {
-  position: relative;
+/* Hide native scrollbar while keeping horizontal scroll behaviour (used by calculator tabs) */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
-.accent-strip::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 32px;
-  height: 4px;
-  background-color: var(--color-primary);
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Responsive container : tighter horizontal padding on small screens so cards don't crowd edges */
+@media (max-width: 480px) {
+  .container-site {
+    padding-inline: 1rem;
+  }
+}
+
+/* Compact field inputs on small viewports : 40px instead of 48px to save vertical space in the calculator */
+@media (max-width: 639px) {
+  .field-input {
+    height: 40px;
+    padding: 8px 12px;
+    font-size: 14px;
+  }
 }

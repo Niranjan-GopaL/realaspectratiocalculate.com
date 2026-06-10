@@ -52,6 +52,7 @@ const methods = [
   },
 ];
 
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'HowTo',
@@ -76,28 +77,28 @@ const jsonLd = {
 
   <main>
     <!-- Hero : compact -->
-    <section class="bg-surface-dark text-on-dark py-10 md:py-12 border-b border-[rgba(255,255,255,0.08)]">
+    <section class="bg-surface-dark text-on-dark py-8 sm:py-10 md:py-12 border-b border-[rgba(255,255,255,0.08)]">
       <div class="container-site">
-        <a href="/" class="inline-flex items-center gap-1.5 text-[12px] font-bold uppercase tracking-wider text-[rgba(255,255,255,0.5)] hover:text-primary mb-4 no-underline transition-colors">
+        <a href={`${base}/`} class="inline-flex items-center gap-1.5 text-[12px] font-bold uppercase tracking-wider text-[rgba(255,255,255,0.5)] hover:text-primary mb-4 no-underline transition-colors">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
           Back to Calculator
         </a>
         <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
           <div>
-            <h1 class="text-[clamp(1.75rem,4vw,2.5rem)] font-bold leading-[0.95] mb-2">
+            <h1 class="text-[clamp(1.5rem,4vw,2.5rem)] font-bold leading-[0.95] mb-2">
               How to Calculate Aspect Ratio
             </h1>
-            <p class="text-[15px] text-[rgba(255,255,255,0.72)] max-w-[560px]">
+            <p class="text-[14px] sm:text-[15px] text-[rgba(255,255,255,0.72)] max-w-[560px]">
               Four methods, step by step, with worked examples.
             </p>
           </div>
-          <a href="/" class="btn-primary self-start">Open Calculator</a>
+          <a href={`${base}/`} class="btn-primary self-start">Open Calculator</a>
         </div>
       </div>
     </section>
 
     <!-- Intro : same padding as hero so transition is balanced -->
-    <section class="py-10 md:py-12 bg-canvas dark:bg-surface-dark">
+    <section class="py-8 sm:py-10 md:py-12 bg-canvas dark:bg-surface-dark">
       <div class="container-site">
         <div class="max-w-[800px]">
           <p class="text-[16px] text-body dark:text-[rgba(255,255,255,0.72)] leading-relaxed mb-4">
@@ -115,19 +116,19 @@ const jsonLd = {
               </li>
             ))}
           </ol>
-          <a href="/" class="btn-primary">Open Calculator</a>
+          <a href={`${base}/`} class="btn-primary">Open Calculator</a>
         </div>
       </div>
     </section>
 
     <!-- Methods : consistent container -->
     {methods.map((method, i) => (
-      <section class={`py-12 border-t border-hairline dark:border-[rgba(255,255,255,0.08)] ${i % 2 === 1 ? 'bg-surface-soft dark:bg-surface-deep' : 'bg-canvas dark:bg-surface-dark'}`}>
+      <section class={`py-10 sm:py-12 border-t border-hairline dark:border-[rgba(255,255,255,0.08)] ${i % 2 === 1 ? 'bg-surface-soft dark:bg-surface-deep' : 'bg-canvas dark:bg-surface-dark'}`}>
         <div class="container-site">
           <div class="max-w-[800px]">
             <p class="text-[10px] font-bold uppercase tracking-wider text-mute dark:text-[rgba(255,255,255,0.45)] mb-2">Method {i+1}</p>
-            <h2 class="text-[24px] font-bold text-ink dark:text-on-dark mb-6">{method.title}</h2>
-            <ol class="space-y-3 mb-6 list-none pl-0">
+            <h2 class="text-[20px] sm:text-[24px] font-bold text-ink dark:text-on-dark mb-5 sm:mb-6">{method.title}</h2>
+            <ol class="space-y-3 mb-5 sm:mb-6 list-none pl-0">
               {method.steps.map((step, si) => (
                 <li class="flex items-start gap-3">
                   <span class="text-[11px] font-bold text-mute dark:text-[rgba(255,255,255,0.4)] font-mono mt-1 shrink-0">0{si+1}</span>
@@ -137,9 +138,9 @@ const jsonLd = {
             </ol>
             <div class="bg-surface-dark dark:bg-surface-elevated relative">
               <div class="h-1 bg-primary"></div>
-              <div class="px-5 py-4">
+              <div class="px-4 sm:px-5 py-3.5 sm:py-4">
                 <p class="text-[10px] text-[rgba(255,255,255,0.5)] mb-1.5 font-bold uppercase tracking-wider">Worked Example</p>
-                <p class="text-[14px] text-on-dark font-mono leading-relaxed">{method.example}</p>
+                <p class="text-[13px] sm:text-[14px] text-on-dark font-mono leading-relaxed break-words">{method.example}</p>
               </div>
             </div>
           </div>
@@ -148,16 +149,16 @@ const jsonLd = {
     ))}
 
     <!-- GCD walkthrough table : consistent container -->
-    <section class="py-12 border-t border-hairline dark:border-[rgba(255,255,255,0.08)] bg-canvas dark:bg-surface-dark">
+    <section class="py-10 sm:py-12 border-t border-hairline dark:border-[rgba(255,255,255,0.08)] bg-canvas dark:bg-surface-dark">
       <div class="container-site">
         <div class="max-w-[800px]">
-          <h2 class="text-[24px] font-bold text-ink dark:text-on-dark mb-2">
+          <h2 class="text-[20px] sm:text-[24px] font-bold text-ink dark:text-on-dark mb-2">
             GCD Method, Worked Examples
           </h2>
-          <p class="text-[14px] text-mute dark:text-[rgba(255,255,255,0.5)] mb-6">Common resolutions reduced to their simplest ratio.</p>
+          <p class="text-[13px] sm:text-[14px] text-mute dark:text-[rgba(255,255,255,0.5)] mb-5 sm:mb-6">Common resolutions reduced to their simplest ratio.</p>
         </div>
-        <div class="max-w-[800px] overflow-x-auto">
-          <table class="w-full text-left border-collapse">
+        <div class="max-w-[800px] overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
+          <table class="w-full min-w-[480px] text-left border-collapse">
             <thead>
               <tr class="border-b border-hairline dark:border-[rgba(255,255,255,0.12)]">
                 {['Resolution', 'GCD', 'Simplified Ratio', 'Decimal'].map(h => (
@@ -183,10 +184,10 @@ const jsonLd = {
     </section>
 
     <!-- Pitfalls -->
-    <section class="py-12 bg-surface-soft dark:bg-surface-deep border-t border-hairline dark:border-[rgba(255,255,255,0.08)]">
+    <section class="py-10 sm:py-12 bg-surface-soft dark:bg-surface-deep border-t border-hairline dark:border-[rgba(255,255,255,0.08)]">
       <div class="container-site">
         <div class="max-w-[800px]">
-          <h2 class="text-[24px] font-bold text-ink dark:text-on-dark mb-6">Common Pitfalls</h2>
+          <h2 class="text-[20px] sm:text-[24px] font-bold text-ink dark:text-on-dark mb-5 sm:mb-6">Common Pitfalls</h2>
           <div class="space-y-5">
             {[
               {
@@ -217,13 +218,13 @@ const jsonLd = {
     </section>
 
     <!-- CTA -->
-    <section class="py-12 bg-primary">
+    <section class="py-10 sm:py-12 bg-primary">
       <div class="container-site flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
-          <h2 class="text-[1.5rem] font-bold leading-tight text-on-primary mb-1">Skip the math.</h2>
-          <p class="text-[14px] text-on-primary opacity-80">All four methods are available as interactive modes in the calculator.</p>
+          <h2 class="text-[1.25rem] sm:text-[1.5rem] font-bold leading-tight text-on-primary mb-1">Skip the math.</h2>
+          <p class="text-[13px] sm:text-[14px] text-on-primary opacity-80">All four methods are available as interactive modes in the calculator.</p>
         </div>
-        <a href="/" class="btn-dark shrink-0">Open Calculator</a>
+        <a href={`${base}/`} class="btn-dark shrink-0">Open Calculator</a>
       </div>
     </section>
   </main>
