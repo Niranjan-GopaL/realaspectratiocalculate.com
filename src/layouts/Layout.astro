@@ -17,6 +17,12 @@ const {
 
 const basePath = (import.meta.env.BASE_URL || '/').replace(/\/?$/, '/');
 const canonicalURL = canonical ?? new URL(Astro.url.pathname, Astro.site).href;
+
+// On the temporary GitHub Pages deploy (base !== '/') we tell search engines to
+// skip indexing so the future custom domain doesn't inherit duplicate URLs.
+// When the bought domain ships, astro.config.mjs flips to base: '/' and this
+// meta disappears automatically.
+const isPreviewDeploy = basePath !== '/';
 ---
 
 <!doctype html>
@@ -25,8 +31,8 @@ const canonicalURL = canonical ?? new URL(Astro.url.pathname, Astro.site).href;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/svg+xml" href={`${basePath}favicon.svg`} />
-    <link rel="icon" href={`${basePath}favicon.ico`} />
     <meta name="generator" content={Astro.generator} />
+    {isPreviewDeploy && <meta name="robots" content="noindex, nofollow" />}
 
     <title>{title}</title>
     <meta name="description" content={description} />
