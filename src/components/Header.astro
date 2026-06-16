@@ -50,11 +50,22 @@ const currentPath = Astro.url.pathname.replace(/\/+$/, '/');
       })}
     </nav>
 
-    <!-- Right : dark mode toggle + mobile menu -->
+    <!-- Right : keyboard shortcut hint + dark mode toggle + mobile menu -->
     <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+      <!-- Keyboard shortcut help (hidden on mobile — no physical keyboard) -->
+      <button
+        id="kbd-help-btn"
+        aria-label="Show keyboard shortcuts"
+        title="Keyboard shortcuts (press ?)"
+        class="hidden md:flex w-10 h-10 items-center justify-center rounded-[var(--radius-xs)] border border-hairline-strong dark:border-[rgba(255,255,255,0.24)] text-ink dark:text-on-dark hover:bg-surface-soft dark:hover:bg-surface-deep transition-colors font-bold text-[14px] leading-none"
+      >
+        ?
+      </button>
+
       <button
         id="theme-toggle"
-        aria-label="Toggle dark mode"
+        aria-label="Toggle dark mode (D)"
+        title="Toggle dark mode (D)"
         class="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-[var(--radius-xs)] border border-hairline-strong dark:border-[rgba(255,255,255,0.24)] text-ink dark:text-on-dark hover:bg-surface-soft dark:hover:bg-surface-deep transition-colors"
       >
         <svg class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">

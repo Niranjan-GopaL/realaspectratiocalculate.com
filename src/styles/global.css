@@ -154,6 +154,30 @@
   display: none;
 }
 
+/* Keyboard key chip (used in the shortcuts dialog) */
+@utility kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 26px;
+  padding: 0 8px;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--color-ink);
+  background-color: var(--color-canvas);
+  border: 1px solid var(--color-hairline-strong);
+  border-bottom-width: 2px;
+  border-radius: var(--radius-xs);
+}
+.dark .kbd {
+  color: var(--color-on-dark);
+  background-color: var(--color-surface-deep);
+  border-color: rgba(255, 255, 255, 0.32);
+}
+
 /* Responsive container : tighter horizontal padding on small screens so cards don't crowd edges */
 @media (max-width: 480px) {
   .container-site {

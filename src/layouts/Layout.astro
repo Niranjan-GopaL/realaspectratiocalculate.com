@@ -72,5 +72,146 @@ const isPreviewDeploy = basePath !== '/';
   </head>
   <body class="min-h-screen flex flex-col bg-canvas dark:bg-surface-dark text-body dark:text-on-dark">
     <slot />
+
+    <!-- Keyboard shortcuts overlay : opened by `?`, closed by Esc / backdrop / × -->
+    <dialog
+      id="kbd-help"
+      class="m-auto p-0 max-w-md w-[calc(100%-2rem)] bg-canvas dark:bg-surface-deep border border-hairline-strong dark:border-[rgba(255,255,255,0.24)] text-ink dark:text-on-dark backdrop:bg-black/70"
+      aria-labelledby="kbd-help-title"
+    >
+      <div class="h-1 bg-primary"></div>
+      <div class="p-6 sm:p-8">
+        <div class="flex items-start justify-between gap-4 mb-6">
+          <div>
+            <p class="text-[10px] font-bold tracking-[0.18em] uppercase text-mute dark:text-[rgba(255,255,255,0.5)] mb-1.5">Power users</p>
+            <h2 id="kbd-help-title" class="text-[22px] sm:text-[26px] font-bold leading-none tracking-tight">Keyboard shortcuts</h2>
+          </div>
+          <button
+            id="kbd-close"
+            aria-label="Close shortcuts"
+            class="shrink-0 w-9 h-9 flex items-center justify-center rounded-[var(--radius-xs)] border border-hairline-strong dark:border-[rgba(255,255,255,0.24)] text-ink dark:text-on-dark hover:bg-surface-soft dark:hover:bg-surface-deep transition-colors text-[18px] leading-none font-bold"
+          >
+            ×
+          </button>
+        </div>
+
+        <div class="space-y-5">
+          <div>
+            <p class="text-[10px] font-bold uppercase tracking-[0.14em] text-mute dark:text-[rgba(255,255,255,0.5)] mb-2.5">Navigate</p>
+            <ul class="list-none p-0 m-0 space-y-2">
+              <li class="flex items-center justify-between gap-3"><span class="text-[14px]">Home — Calculator</span><kbd class="kbd">H</kbd></li>
+              <li class="flex items-center justify-between gap-3"><span class="text-[14px]">Social media ratios</span><kbd class="kbd">S</kbd></li>
+              <li class="flex items-center justify-between gap-3"><span class="text-[14px]">Video ratios</span><kbd class="kbd">V</kbd></li>
+              <li class="flex items-center justify-between gap-3"><span class="text-[14px]">How-to guide</span><kbd class="kbd">G</kbd></li>
+            </ul>
+          </div>
+
+          <div>
+            <p class="text-[10px] font-bold uppercase tracking-[0.14em] text-mute dark:text-[rgba(255,255,255,0.5)] mb-2.5">Calculator</p>
+            <ul class="list-none p-0 m-0 space-y-2">
+              <li class="flex items-center justify-between gap-3"><span class="text-[14px]">Find Dimension</span><kbd class="kbd">1</kbd></li>
+              <li class="flex items-center justify-between gap-3"><span class="text-[14px]">Find Ratio</span><kbd class="kbd">2</kbd></li>
+              <li class="flex items-center justify-between gap-3"><span class="text-[14px]">Resize</span><kbd class="kbd">3</kbd></li>
+              <li class="flex items-center justify-between gap-3"><span class="text-[14px]">Scale %</span><kbd class="kbd">4</kbd></li>
+              <li class="flex items-center justify-between gap-3"><span class="text-[14px]">Focus first input</span><kbd class="kbd">/</kbd></li>
+            </ul>
+          </div>
+
+          <div>
+            <p class="text-[10px] font-bold uppercase tracking-[0.14em] text-mute dark:text-[rgba(255,255,255,0.5)] mb-2.5">Other</p>
+            <ul class="list-none p-0 m-0 space-y-2">
+              <li class="flex items-center justify-between gap-3"><span class="text-[14px]">Toggle dark mode</span><kbd class="kbd">D</kbd></li>
+              <li class="flex items-center justify-between gap-3"><span class="text-[14px]">Show this dialog</span><kbd class="kbd">?</kbd></li>
+              <li class="flex items-center justify-between gap-3"><span class="text-[14px]">Close / unfocus</span><kbd class="kbd">Esc</kbd></li>
+            </ul>
+          </div>
+        </div>
+
+        <p class="mt-6 pt-4 border-t border-hairline dark:border-[rgba(255,255,255,0.12)] text-[12px] text-mute dark:text-[rgba(255,255,255,0.5)]">
+          Shortcuts pause while you're typing in a field.
+        </p>
+      </div>
+    </dialog>
+
+    <script define:vars={{ basePath }}>
+      (function () {
+        const MODES = ['find-dimension', 'find-ratio', 'resize', 'scale'];
+        const base = basePath.replace(/\/$/, '');
+        const NAV = {
+          h: base + '/',
+          s: base + '/social-media-aspect-ratios/',
+          v: base + '/video-aspect-ratios/',
+          g: base + '/how-to-calculate-aspect-ratio/',
+        };
+
+        const isEditable = (el) =>
+          !!el && (
+            ['INPUT', 'TEXTAREA', 'SELECT'].includes(el.tagName) ||
+            el.isContentEditable
+          );
+
+        const dlg = document.getElementById('kbd-help');
+        const helpBtn = document.getElementById('kbd-help-btn');
+        const closeBtn = document.getElementById('kbd-close');
+
+        const openHelp = () => { if (dlg && !dlg.open) dlg.showModal(); };
+        const closeHelp = () => { if (dlg && dlg.open) dlg.close(); };
+
+        helpBtn?.addEventListener('click', openHelp);
+        closeBtn?.addEventListener('click', closeHelp);
+        // Click outside the inner box (on the backdrop) closes the dialog.
+        dlg?.addEventListener('click', (e) => {
+          if (e.target === dlg) closeHelp();
+        });
+
+        document.addEventListener('keydown', (e) => {
+          // Esc is always handled : close dialog, then mobile menu, then blur input.
+          if (e.key === 'Escape') {
+            if (dlg && dlg.open) return; // native dialog closes itself
+            const mm = document.getElementById('mobile-menu');
+            if (mm && !mm.classList.contains('hidden')) {
+              mm.classList.add('hidden');
+              document.getElementById('mobile-menu-btn')?.setAttribute('aria-expanded', 'false');
+              return;
+            }
+            if (isEditable(document.activeElement)) document.activeElement.blur();
+            return;
+          }
+
+          if (isEditable(e.target)) return;
+          if (e.ctrlKey || e.metaKey || e.altKey) return;
+
+          const k = e.key;
+
+          if (k === '?') { e.preventDefault(); openHelp(); return; }
+
+          if (k === '/') {
+            const firstInput = document.querySelector('input[data-mode]');
+            if (firstInput) {
+              e.preventDefault();
+              firstInput.focus();
+              firstInput.select();
+            }
+            return;
+          }
+
+          if (k === 'd' || k === 'D') {
+            document.getElementById('theme-toggle')?.click();
+            return;
+          }
+
+          if (k >= '1' && k <= '4') {
+            const tab = document.getElementById('tab-' + MODES[Number(k) - 1]);
+            if (tab) { e.preventDefault(); tab.click(); }
+            return;
+          }
+
+          const navKey = k.toLowerCase();
+          if (NAV[navKey] && 'hsvg'.includes(navKey)) {
+            window.location.href = NAV[navKey];
+          }
+        });
+      })();
+    </script>
   </body>
 </html>
